@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en">  
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -312,6 +312,7 @@
     </style>
 </head>
 <body>
+    <button class="btn btn-secondary" onclick="testFirebase()">Test Firebase Connection</button>
     <div class="container">
         <div class="header">
             <h1>NEET PHYSICS PRACTICE</h1>
@@ -644,6 +645,35 @@
 
         // Initialize
         loadQuestions();
+    
+    window.testFirebase = function() {
+    console.log('Testing Firebase...');
+    console.log('Config:', firebaseConfig);
+    console.log('Database:', db);
+    alert('Check console (F12) for Firebase test results');
+};
+```
+
+## 📝 **What Console Should Show:**
+
+**If working correctly:**
+```
+Firebase initialized successfully
+Database URL: https://aidu-neet-physics-default-rtdb.firebaseio.com
+Attempting to load questions from Firebase...
+Firebase data received: {0: {...}, 1: {...}}
+Total questions loaded: 50
+Topics found: ["T01", "T02", "T03"]
+Topics populated successfully
+```
+
+**If there's an error:**
+```
+Firebase error: PERMISSION_DENIED
+```
+→ Fix Firebase Security Rules
+```
+Firebase data received: null
     </script>
 </body>
 </html>
