@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NEET Physics Quiz</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #f4f4f9; }
+        .quiz-container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .question-img { max-width: 100%; height: auto; margin: 15px 0; border-radius: 8px; display: none; }
+        .option { display: block; width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; text-align: left; background: #fff; transition: 0.3s; }
+        .option:hover { background: #eef2ff; border-color: #4f46e5; }
+        .explanation { display: none; margin-top: 20px; padding: 15px; background: #f0fdf4; border-left: 4px solid #22c55e; border-radius: 4px; }
+        #next-btn { margin-top: 20px; padding: 10px 20px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quiz">
+    <div id="topic-tag" style="color: #6366f1; font-weight: bold; margin-bottom: 5px;"></div>
+    <div id="question-text" style="font-size: 1.2em; font-weight: 600;">Loading questions...</div>
+    
+    <img id="question-image" class="question-img" src="" alt="Question Image">
+
+    <div id="options-container"></div>
+    
+    <div id="explanation-box" class="explanation">
+        <strong>Explanation:</strong> <span id="explanation-text"></span>
+    </div>
+
+    <button id="next-btn" style="display:none;" onclick="loadNextQuestion()">Next Question</button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "aidu-neet-physics",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "...",
+    appId: "..."
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  let questions = [];
+  let currentIndex = 0;
+
+  async function fetchQuestions() {
+    const querySnapshot = await getDocs(collection(db, "questions"));
+    querySnapshot.forEach((doc) => questions.push(doc.data()));
+    // Shuffle if you want random order
+    questions.sort(() => Math.random() - 0.5);
+    displayQuestion();
+  }
+
+  window.displayQuestion = function() {
+    const q = questions[currentIndex];
+    const imgElement = document.getElementById('question-image');
+    
+    document.getElementById('topic-tag').innerText = q.topic_id;
+    document.getElementById('question-text').innerHTML = q.question;
+    document.getElementById('explanation-box').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+
+    // Image logic for Column I
+    if (q.image_url && q.image_url !== "") {
+        imgElement.src = q.image_url;
+        imgElement.style.display = 'block';
+    } else {
+        imgElement.style.display = 'none';
+    }
+
+    const options = [q.optionA, q.optionB, q.optionC, q.optionD];
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+
+    options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerHTML = opt;
+        btn.onclick = () => checkAnswer(index + 1, q.correct_code, q.explanation);
+        container.appendChild(btn);
+    });
+
+    // Re-render LaTeX
+    MathJax.typeset();
+  }
+
+  function checkAnswer(selected, correct, explanation) {
+    const box = document.getElementById('explanation-box');
+    const text = document.getElementById('explanation-text');
+    text.innerHTML = explanation;
+    box.style.display = 'block';
+    document.getElementById('next-btn').style.display = 'inline-block';
+    MathJax.typeset(); // Render math in explanation
+  }
+
+  window.loadNextQuestion = () => {
+    currentIndex++;
+    if (currentIndex < questions.length) displayQuestion();
+    else alert("Quiz Finished!");
+  };
+
+  fetchQuestions();
+</script>
+</body>
+</html>
