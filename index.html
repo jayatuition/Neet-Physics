@@ -3,210 +3,619 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET Physics Portal</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <title>NEET Physics Practice</title>
     <style>
-        :root { --primary: #4f46e5; --bg: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); padding: 15px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .hidden { display: none; }
-        .topic-btn { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-weight: 600; background: white; text-align: left; }
-        .topic-btn:hover { border-color: var(--primary); background: #f5f3ff; }
-        .stats-bar { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .option { width: 100%; padding: 12px; margin: 8px 0; border: 1.5px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: left; background: white; }
-        .correct { background: #d1fae5 !important; border-color: #059669 !important; }
-        .wrong { background: #fee2e2 !important; border-color: #dc2626 !important; }
-        .explanation { background: #f0fdf4; padding: 15px; border-radius: 8px; margin-top: 15px; display: none; border-left: 4px solid #059669; }
-        .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 15px; font-weight: 600; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: none; /* Will show when logo is added */
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #f8f9fa;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        select, .timer, .question-counter {
+            padding: 10px 15px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+        }
+
+        select {
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        .timer {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .question-counter {
+            font-weight: bold;
+            color: #764ba2;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .start-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .start-screen h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .start-screen p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            font-size: 1.1em;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #e7eaff;
+        }
+
+        .option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .option.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        .explanation h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .explanation p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .score-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .score-screen h2 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .score-display {
+            font-size: 4em;
+            color: #667eea;
+            font-weight: bold;
+            margin: 30px 0;
+        }
+
+        .score-details {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .score-item {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            min-width: 150px;
+        }
+
+        .score-item h3 {
+            color: #666;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .score-item p {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.5em;
+            color: #667eea;
+        }
+
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .question-text {
+                font-size: 1.1em;
+            }
+
+            .option {
+                font-size: 1em;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>NEET PHYSICS PRACTICE</h1>
+            <div class="logo" id="logo"></div>
+        </div>
 
-<div class="container">
-    <div id="start-screen">
-        <h2 style="text-align: center;">NEET Physics Prep</h2>
-        <p style="text-align: center; color: #64748b;">Select a topic to begin:</p>
-        <div id="topic-list">
-            <button class="topic-btn" onclick="initQuiz('T01')">Units & Measurements (T01)</button>
-            <button class="topic-btn" onclick="initQuiz('T02')">Kinematics (T02)</button>
-            <button class="topic-btn" onclick="initQuiz('ALL')">Mixed Practice (All Topics)</button>
+        <div class="controls">
+            <div class="control-group">
+                <label for="topicSelect">Select Topic:</label>
+                <select id="topicSelect">
+                    <option value="">Loading topics...</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Timer:</label>
+                <div class="timer" id="timer">00:00</div>
+            </div>
+            <div class="control-group">
+                <label>Progress:</label>
+                <div class="question-counter" id="questionCounter">0/0</div>
+            </div>
+        </div>
+
+        <div class="content" id="content">
+            <div class="start-screen">
+                <h2>Welcome to NEET Physics Practice!</h2>
+                <p>Select a topic from the dropdown above and click Start to begin your practice session.</p>
+                <button class="btn btn-primary" id="startBtn" disabled>Start Quiz</button>
+            </div>
         </div>
     </div>
 
-    <div id="quiz-screen" class="hidden">
-        <div class="stats-bar">
-            <span id="stat-topic">Topic</span>
-            <span>Score: <b id="stat-score">0</b></span>
-            <span>Time: <b id="stat-timer">00:00</b></span>
-        </div>
-        
-        <div id="question-area">
-            <div id="q-text" style="font-weight: 600; margin-bottom: 15px;"></div>
-            <img id="q-img" style="max-width:100%; display:none; margin-bottom:15px; border-radius:8px;">
-            <div id="options-box"></div>
-        </div>
+    <script type="module">
+        // Firebase Configuration
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
-        <div id="expl-box" class="explanation">
-            <small><b>Explanation:</b></small>
-            <div id="expl-text"></div>
-        </div>
+        // TODO: Replace with your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-        <button id="next-btn" class="btn-main hidden" onclick="nextQuestion()">Next Question</button>
-        <button class="btn-main" style="background:#94a3b8; margin-top:10px;" onclick="location.reload()">Exit Practice</button>
-    </div>
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-    <div id="result-screen" class="hidden" style="text-align: center;">
-        <h2>Practice Complete!</h2>
-        <div style="font-size: 3rem; margin: 20px 0; color: var(--primary);" id="final-score">0/0</div>
-        <p id="final-time">Total Time: 00:00</p>
-        <button class="btn-main" onclick="location.reload()">Test Another Topic</button>
-    </div>
-</div>
+        // Topic ID to Name mapping
+        const topicMap = {
+            '1': 'Mechanics',
+            '2': 'Thermodynamics',
+            '3': 'Waves and Optics',
+            '4': 'Electricity and Magnetism',
+            '5': 'Modern Physics',
+            '6': 'Kinematics',
+            '7': 'Laws of Motion',
+            '8': 'Work, Energy and Power',
+            '9': 'Rotational Motion',
+            '10': 'Gravitation'
+        };
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // Global variables
+        let allQuestions = [];
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let timerInterval = null;
+        let startTime = null;
+        let selectedTopic = '';
 
-    // 1. YOUR FIREBASE CONFIG
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "aidu-neet-physics.firebaseapp.com",
-      projectId: "aidu-neet-physics",
-      storageBucket: "aidu-neet-physics.appspot.com",
-      messagingSenderId: "...",
-      appId: "..."
-    };
+        // DOM elements
+        const topicSelect = document.getElementById('topicSelect');
+        const startBtn = document.getElementById('startBtn');
+        const content = document.getElementById('content');
+        const timer = document.getElementById('timer');
+        const questionCounter = document.getElementById('questionCounter');
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let allQuestions = [];
-    let curIdx = 0;
-    let score = 0;
-    let startTime;
-    let timerInterval;
-
-    window.initQuiz = async (topic) => {
-        document.getElementById('start-screen').classList.add('hidden');
-        document.getElementById('quiz-screen').classList.remove('hidden');
-        document.getElementById('q-text').innerText = "Loading Questions...";
-        
-        allQuestions = []; 
-        let qRef = collection(db, "questions");
-        let snap;
-
-        try {
-            // Select questions for specific topic
-            if(topic !== 'ALL') {
-                const qFiltered = query(qRef, where("topic_id", "==", topic));
-                snap = await getDocs(qFiltered);
-            } else {
-                snap = await getDocs(qRef);
-            }
+        // Fetch questions from Firebase
+        function loadQuestions() {
+            const questionsRef = ref(db, 'questions'); // Adjust path as needed
             
-            snap.forEach(doc => {
-                let data = doc.data();
-                if(data.question) allQuestions.push(data); // Skip empty rows
+            onValue(questionsRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    allQuestions = Object.values(data);
+                    populateTopics();
+                } else {
+                    showError('No questions found in database');
+                }
+            }, (error) => {
+                showError('Error loading questions: ' + error.message);
             });
+        }
+
+        // Populate topic dropdown
+        function populateTopics() {
+            const topics = [...new Set(allQuestions.map(q => q.topic_id))];
+            topicSelect.innerHTML = '<option value="">-- Select a Topic --</option>';
             
-            if(allQuestions.length === 0) {
-                alert("No questions found for this topic.");
-                location.reload();
+            topics.forEach(topicId => {
+                const option = document.createElement('option');
+                option.value = topicId;
+                option.textContent = topicMap[topicId] || `Topic ${topicId}`;
+                topicSelect.appendChild(option);
+            });
+
+            startBtn.disabled = false;
+        }
+
+        // Start quiz
+        function startQuiz() {
+            selectedTopic = topicSelect.value;
+            if (!selectedTopic) {
+                alert('Please select a topic first!');
                 return;
             }
 
-            allQuestions.sort(() => Math.random() - 0.5); // Randomize order
+            currentQuestions = allQuestions.filter(q => q.topic_id === selectedTopic);
+            if (currentQuestions.length === 0) {
+                alert('No questions available for this topic!');
+                return;
+            }
+
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
             startTimer();
-            renderQ();
-        } catch (e) {
-            console.error(e);
-            alert("Database error. Please refresh.");
-        }
-    };
-
-    function startTimer() {
-        startTime = Date.now();
-        timerInterval = setInterval(() => {
-            const diff = Math.floor((Date.now() - startTime) / 1000);
-            const m = Math.floor(diff / 60).toString().padStart(2, '0');
-            const s = (diff % 60).toString().padStart(2, '0');
-            document.getElementById('stat-timer').innerText = `${m}:${s}`;
-        }, 1000);
-    }
-
-    function renderQ() {
-        const q = allQuestions[curIdx];
-        
-        // Progress display (e.g., T01 - 1/5)
-        document.getElementById('stat-topic').innerText = `${q.topic_id} (${curIdx + 1}/${allQuestions.length})`;
-        document.getElementById('q-text').innerHTML = q.question;
-        document.getElementById('expl-box').style.display = 'none';
-        document.getElementById('next-btn').classList.add('hidden');
-        
-        // Final question button change
-        document.getElementById('next-btn').innerText = (curIdx === allQuestions.length - 1) ? "Finish Test" : "Next Question";
-
-        const img = document.getElementById('q-img');
-        if(q.image_url && q.image_url.trim() !== "") { 
-            img.src = q.image_url; 
-            img.style.display = 'block'; 
-        } else { 
-            img.style.display = 'none'; 
+            showQuestion();
         }
 
-        const optBox = document.getElementById('options-box');
-        optBox.innerHTML = '';
-        [q.optionA, q.optionB, q.optionC, q.optionD].forEach((text, i) => {
-            const b = document.createElement('button');
-            b.className = 'option';
-            b.innerHTML = text;
-            b.onclick = () => checkAns(b, i+1, q.correct_code, q.explanation);
-            optBox.appendChild(b);
+        // Start timer
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Show question
+        function showQuestion() {
+            if (currentQuestionIndex >= currentQuestions.length) {
+                showScore();
+                return;
+            }
+
+            const question = currentQuestions[currentQuestionIndex];
+            questionCounter.textContent = `${currentQuestionIndex + 1}/${currentQuestions.length}`;
+
+            content.innerHTML = `
+                <div class="question-card">
+                    <div class="question-text">
+                        <strong>Q${currentQuestionIndex + 1}:</strong> ${question.Question}
+                    </div>
+                    <div class="options">
+                        <div class="option" data-option="A">
+                            <strong>A.</strong> ${question['Option A']}
+                        </div>
+                        <div class="option" data-option="B">
+                            <strong>B.</strong> ${question['Option B']}
+                        </div>
+                        <div class="option" data-option="C">
+                            <strong>C.</strong> ${question['Option C']}
+                        </div>
+                        <div class="option" data-option="D">
+                            <strong>D.</strong> ${question['Option D']}
+                        </div>
+                    </div>
+                    <div class="explanation" id="explanation">
+                        <h4>Explanation:</h4>
+                        <p>${question.Explanation || 'No explanation available.'}</p>
+                    </div>
+                </div>
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="exitBtn">Exit Quiz</button>
+                    <button class="btn btn-primary" id="nextBtn" style="display:none;">Next Question</button>
+                </div>
+            `;
+
+            // Add event listeners
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', () => selectOption(option));
+            });
+
+            document.getElementById('exitBtn').addEventListener('click', exitQuiz);
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', nextQuestion);
+            }
+        }
+
+        // Select option
+        function selectOption(optionElement) {
+            const options = document.querySelectorAll('.option');
+            if (options[0].classList.contains('disabled')) return;
+
+            const selectedOption = optionElement.dataset.option;
+            const question = currentQuestions[currentQuestionIndex];
+            const correctOption = question['Correct Option'];
+
+            // Disable all options
+            options.forEach(opt => {
+                opt.classList.add('disabled');
+                if (opt.dataset.option === correctOption) {
+                    opt.classList.add('correct');
+                }
+            });
+
+            // Mark selected option
+            optionElement.classList.add('selected');
+            if (selectedOption !== correctOption) {
+                optionElement.classList.add('incorrect');
+                incorrectAnswers++;
+            } else {
+                correctAnswers++;
+                score++;
+            }
+
+            // Show explanation and next button
+            document.getElementById('explanation').classList.add('show');
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        // Next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        // Show score
+        function showScore() {
+            clearInterval(timerInterval);
+            const totalTime = timer.textContent;
+            const percentage = Math.round((score / currentQuestions.length) * 100);
+
+            content.innerHTML = `
+                <div class="score-screen">
+                    <h2>Quiz Complete! 🎉</h2>
+                    <div class="score-display">${percentage}%</div>
+                    <div class="score-details">
+                        <div class="score-item">
+                            <h3>Correct</h3>
+                            <p style="color: #28a745;">${correctAnswers}</p>
+                        </div>
+                        <div class="score-item">
+                            <h3>Incorrect</h3>
+                            <p style="color: #dc3545;">${incorrectAnswers}</p>
+                        </div>
+                        <div class="score-item">
+                            <h3>Total Time</h3>
+                            <p>${totalTime}</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="restartBtn">Try Another Topic</button>
+                    <button class="btn btn-secondary" id="retryBtn">Retry Same Topic</button>
+                </div>
+            `;
+
+            document.getElementById('restartBtn').addEventListener('click', () => {
+                location.reload();
+            });
+
+            document.getElementById('retryBtn').addEventListener('click', () => {
+                startQuiz();
+            });
+        }
+
+        // Exit quiz
+        function exitQuiz() {
+            if (confirm('Are you sure you want to exit? Your progress will be lost.')) {
+                clearInterval(timerInterval);
+                location.reload();
+            }
+        }
+
+        // Show error
+        function showError(message) {
+            content.innerHTML = `
+                <div class="error">
+                    <h2>Error</h2>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Event listeners
+        topicSelect.addEventListener('change', () => {
+            startBtn.disabled = !topicSelect.value;
         });
 
-        renderMathInElement(document.getElementById('quiz-screen'), {
-            delimiters: [{left: '$', right: '$', display: false}, {left: '$$', right: '$$', display: true}]
-        });
-    }
+        startBtn.addEventListener('click', startQuiz);
 
-    function checkAns(el, sel, cor, expl) {
-        const btns = document.querySelectorAll('.option');
-        btns.forEach(b => b.style.pointerEvents = 'none');
-        
-        if(sel === cor) {
-            el.classList.add('correct');
-            score++;
-            document.getElementById('stat-score').innerText = score;
-        } else {
-            el.classList.add('wrong');
-            btns[cor-1].classList.add('correct');
-        }
-
-        document.getElementById('expl-text').innerHTML = expl;
-        document.getElementById('expl-box').style.display = 'block';
-        document.getElementById('next-btn').classList.remove('hidden');
-        renderMathInElement(document.getElementById('expl-box'));
-    }
-
-    window.nextQuestion = () => {
-        // If this was the last question, show results
-        if (curIdx >= allQuestions.length - 1) {
-            endQuiz();
-        } else {
-            curIdx++;
-            renderQ();
-        }
-    };
-
-    function endQuiz() {
-        clearInterval(timerInterval);
-        document.getElementById('quiz-screen').classList.add('hidden');
-        document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('final-score').innerText = `${score} / ${allQuestions.length}`;
-        document.getElementById('final-time').innerText = `Total Time: ${document.getElementById('stat-timer').innerText}`;
-    }
-</script>
+        // Initialize
+        loadQuestions();
+    </script>
 </body>
 </html>
