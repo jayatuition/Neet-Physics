@@ -64,6 +64,19 @@
         <button class="btn-main" onclick="location.reload()">Start New Session</button>
     </div>
 </div>
+    <div id="result-screen" class="hidden" style="text-align: center; padding: 40px 20px;">
+    <h2 style="color: var(--primary); font-size: 2rem;">Practice Over!</h2>
+    <p style="color: #64748b;">You have exhausted all questions for this topic.</p>
+    
+    <div style="background: #f1f5f9; padding: 20px; border-radius: 12px; margin: 25px 0;">
+        <div style="font-size: 0.9rem; text-transform: uppercase; color: #64748b;">Final Score</div>
+        <div style="font-size: 3.5rem; font-weight: 800; color: #1e293b;" id="final-score">0/0</div>
+        <div id="final-time" style="font-weight: 600; margin-top: 10px;">Time Taken: 00:00</div>
+    </div>
+
+    <button class="btn-main" onclick="location.reload()">Test Another Topic</button>
+    <button class="btn-main" style="background:#ef4444; margin-top:10px;" onclick="window.close()">Exit Portal</button>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -194,22 +207,29 @@
     }
 
     window.nextQuestion = () => {
+    // Check if there are more questions left
+    if (curIdx < allQuestions.length - 1) {
         curIdx++;
-        if(curIdx < allQuestions.length) renderQ();
-        else endQuiz();
-    };
-
-    window.exitQuiz = () => { 
-        if(confirm("Exit Practice? Your current progress will be lost.")) location.reload(); 
-    };
-
-    function endQuiz() {
-        clearInterval(timerInterval);
-        document.getElementById('quiz-screen').classList.add('hidden');
-        document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('final-score').innerText = `${score} / ${allQuestions.length}`;
-        document.getElementById('final-time').innerText = `Total Time: ${document.getElementById('stat-timer').innerText}`;
+        renderQ();
+        // Update button text for the very last question
+        if (curIdx === allQuestions.length - 1) {
+            document.getElementById('next-btn').innerText = "Finish & View Results";
+        }
+    } else {
+        // Topic exhausted - Show results
+        endQuiz();
     }
+};
+
+function endQuiz() {
+    clearInterval(timerInterval); // Stop the clock
+    document.getElementById('quiz-screen').classList.add('hidden');
+    document.getElementById('result-screen').classList.remove('hidden');
+    
+    // Display Final Stats
+    document.getElementById('final-score').innerText = `${score} / ${allQuestions.length}`;
+    document.getElementById('final-time').innerText = `Total Time: ${document.getElementById('stat-timer').innerText}`;
+}
 </script>
 </body>
 </html>
