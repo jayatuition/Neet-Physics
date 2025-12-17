@@ -1,80 +1,164 @@
-// 1. Topic Mapping: Add your Topic IDs and Names here
-const topicNames = {
-  "T01": "Kinematics - Motion in a Straight Line",
-  "T02": "Laws of Motion",
-  "T03": "Work, Energy, and Power"
-  // Add more as you create them in your Sheet
-};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEET Physics Quiz</title>
 
-async function fetchQuestions() {
-  const querySnapshot = await getDocs(collection(db, "questions"));
-  querySnapshot.forEach((doc) => questions.push(doc.data()));
-  questions.sort(() => Math.random() - 0.5);
-  displayQuestion();
-}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
-window.displayQuestion = function() {
-  const q = questions[currentIndex];
-  
-  // Convert T01 to Actual Topic Name
-  const friendlyTopic = topicNames[q.topic_id] || q.topic_id;
-  document.getElementById('topic-tag').innerText = friendlyTopic;
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --success: #059669;
+            --danger: #dc2626;
+            --bg: #f8fafc;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: #1e293b; padding: 20px; line-height: 1.6; }
+        .quiz-card { max-width: 650px; margin: 40px auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+        #topic-tag { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 700; margin-bottom: 8px; display: block; }
+        #question-text { font-size: 1.25rem; font-weight: 600; margin-bottom: 20px; }
+        .question-img { max-width: 100%; height: auto; margin-bottom: 20px; border-radius: 8px; display: none; border: 1px solid #e2e8f0; }
+        .options-grid { display: grid; gap: 12px; }
+        .option { padding: 14px 20px; border: 2px solid #e2e8f0; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1rem; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
+        .option:hover { border-color: var(--primary); background: #f5f3ff; }
+        .option.correct { background: #d1fae5; border-color: var(--success); color: #064e3b; font-weight: 600; }
+        .option.wrong { background: #fee2e2; border-color: var(--danger); color: #7f1d1d; }
+        .explanation-box { display: none; margin-top: 25px; padding: 20px; background: #f0fdf4; border-left: 4px solid var(--success); border-radius: 8px; }
+        #next-btn { width: 100%; margin-top: 20px; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; display: none; }
+        #next-btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
 
-  document.getElementById('question-text').innerHTML = q.question;
-  document.getElementById('explanation-box').style.display = 'none';
-  document.getElementById('next-btn').style.display = 'none';
+<div class="quiz-card" id="quiz-scope">
+    <span id="topic-tag">Loading...</span>
+    <div id="question-text">Fetching your questions...</div>
+    
+    <img id="question-image" class="question-img" src="" alt="Question Diagram">
 
-  // Handle images from Column I
-  const imgElement = document.getElementById('question-image');
-  if (q.image_url && q.image_url.trim() !== "") {
-      imgElement.src = q.image_url;
-      imgElement.style.display = 'block';
-  } else {
-      imgElement.style.display = 'none';
+    <div id="options-container" class="options-grid"></div>
+    
+    <div id="explanation-box" class="explanation-box">
+        <strong style="color: var(--success);">Explanation:</strong>
+        <div id="explanation-text" style="margin-top: 10px;"></div>
+    </div>
+
+    <button id="next-btn" onclick="loadNextQuestion()">Next Question →</button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // REPLACE WITH YOUR FIREBASE PROJECT CONFIG
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "aidu-neet-physics.firebaseapp.com",
+    projectId: "aidu-neet-physics",
+    storageBucket: "aidu-neet-physics.appspot.com",
+    messagingSenderId: "YOUR_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Topic Mapping for "topic_id" display
+  const topicNames = {
+    "T01": "Units and Measurements",
+    "T02": "Kinematics: Motion in a Straight Line",
+    "T03": "Motion in a Plane"
+    // Add more T-codes here as you add them to your sheet
+  };
+
+  let questions = [];
+  let currentIndex = 0;
+
+  async function startQuiz() {
+    const querySnapshot = await getDocs(collection(db, "questions"));
+    querySnapshot.forEach((doc) => questions.push(doc.data()));
+    questions.sort(() => Math.random() - 0.5); // Shuffle
+    renderQuestion();
   }
 
-  const options = [q.optionA, q.optionB, q.optionC, q.optionD];
-  const container = document.getElementById('options-container');
-  container.innerHTML = '';
-
-  options.forEach((opt, index) => {
-      const btn = document.createElement('button');
-      btn.className = 'option';
-      btn.innerHTML = opt;
-      // Answer Index is 1-based (1=A, 2=B, etc.)
-      btn.onclick = (e) => checkAnswer(e.target, index + 1, q.correct_code, q.explanation);
-      container.appendChild(btn);
-  });
-
-  MathJax.typeset();
-}
-
-function checkAnswer(selectedElement, selectedIndex, correctIndex, explanation) {
-  const allOptions = document.querySelectorAll('.option');
-  
-  // Disable all buttons after one click
-  allOptions.forEach(btn => btn.style.pointerEvents = 'none');
-
-  // Logic to show Correct/Wrong
-  if (selectedIndex === correctIndex) {
-      selectedElement.style.background = "#d1fae5"; // Green for Correct
-      selectedElement.style.borderColor = "#059669";
-      selectedElement.innerHTML += " ✅ <b>Correct!</b>";
-  } else {
-      selectedElement.style.background = "#fee2e2"; // Red for Wrong
-      selectedElement.style.borderColor = "#dc2626";
-      selectedElement.innerHTML += " ❌ <b>Wrong Answer</b>";
-      
-      // Highlight the right answer in green
-      allOptions[correctIndex - 1].style.background = "#d1fae5";
-      allOptions[correctIndex - 1].style.borderColor = "#059669";
+  function renderMath() {
+    renderMathInElement(document.getElementById('quiz-scope'), {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError : false
+    });
   }
 
-  // Show Explanation from Column H
-  const box = document.getElementById('explanation-box');
-  document.getElementById('explanation-text').innerHTML = explanation;
-  box.style.display = 'block';
-  document.getElementById('next-btn').style.display = 'inline-block';
-  
-  MathJax.typeset();
-}
+  window.renderQuestion = function() {
+    const q = questions[currentIndex];
+    
+    // Set Topic
+    document.getElementById('topic-tag').innerText = topicNames[q.topic_id] || q.topic_id;
+    document.getElementById('question-text').innerHTML = q.question;
+    document.getElementById('explanation-box').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+
+    // Handle Image (Column I)
+    const imgElement = document.getElementById('question-image');
+    if (q.image_url && q.image_url.trim() !== "") {
+        imgElement.src = q.image_url;
+        imgElement.style.display = 'block';
+    } else {
+        imgElement.style.display = 'none';
+    }
+
+    // Build Options
+    const options = [q.optionA, q.optionB, q.optionC, q.optionD];
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+
+    options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerHTML = `<span>${opt}</span>`;
+        btn.onclick = (e) => validateAnswer(btn, index + 1, q.correct_code, q.explanation);
+        container.appendChild(btn);
+    });
+
+    renderMath(); // Initial KaTeX render
+  }
+
+  window.validateAnswer = function(element, selected, correct, explanation) {
+    const allOptions = document.querySelectorAll('.option');
+    allOptions.forEach(btn => btn.style.pointerEvents = 'none');
+
+    if (selected === correct) {
+        element.classList.add('correct');
+        element.innerHTML += "<span>✅</span>";
+    } else {
+        element.classList.add('wrong');
+        element.innerHTML += "<span>❌</span>";
+        // Show correct answer
+        allOptions[correct - 1].classList.add('correct');
+    }
+
+    // Show Explanation (Column H)
+    document.getElementById('explanation-text').innerHTML = explanation;
+    document.getElementById('explanation-box').style.display = 'block';
+    document.getElementById('next-btn').style.display = 'block';
+    
+    renderMath(); // Re-render KaTeX for explanation
+  }
+
+  window.loadNextQuestion = () => {
+    currentIndex++;
+    if (currentIndex < questions.length) renderQuestion();
+    else {
+        document.getElementById('quiz-scope').innerHTML = "<h2>Quiz Completed!</h2><p>Refresh to start again.</p>";
+    }
+  };
+
+  startQuiz();
+</script>
+</body>
+</html>
