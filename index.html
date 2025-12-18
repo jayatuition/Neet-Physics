@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">  
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -312,7 +312,6 @@
     </style>
 </head>
 <body>
-    <button class="btn btn-secondary" onclick="testFirebase()">Test Firebase Connection</button>
     <div class="container">
         <div class="header">
             <h1>NEET PHYSICS PRACTICE</h1>
@@ -351,13 +350,12 @@
     <script type="module">
         // Firebase Configuration
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // TODO: Replace with your Firebase configuration
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
             projectId: "YOUR_PROJECT_ID",
             storageBucket: "YOUR_PROJECT_ID.appspot.com",
             messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
@@ -366,10 +364,10 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        const db = getFirestore(app);
         
         console.log('Firebase initialized successfully');
-        console.log('Database URL:', firebaseConfig.databaseURL);
+        console.log('Using Cloud Firestore');
 
         // Topic ID to Name mapping
         const topicMap = {
@@ -403,32 +401,43 @@
         const timer = document.getElementById('timer');
         const questionCounter = document.getElementById('questionCounter');
 
-        // Fetch questions from Firebase
-        function loadQuestions() {
-            console.log('Attempting to load questions from Firebase...');
-            const questionsRef = ref(db, 'questions'); // Adjust path as needed
-            
-            onValue(questionsRef, (snapshot) => {
-                const data = snapshot.val();
-                console.log('Firebase data received:', data);
+        // Fetch questions from Firebase Firestore
+        async function loadQuestions() {
+            try {
+                console.log('Attempting to load questions from Firestore...');
                 
-                if (data) {
-                    // Handle both array and object formats
-                    allQuestions = Array.isArray(data) ? data : Object.values(data);
-                    console.log('Total questions loaded:', allQuestions.length);
-                    
-                    if (allQuestions.length > 0) {
-                        populateTopics();
-                    } else {
-                        showError('No questions found in database. Please check your Firebase data structure.');
-                    }
-                } else {
-                    showError('No data found at path "questions". Please verify:<br>1. Firebase configuration is correct<br>2. Data exists in Firebase<br>3. Database path is "questions"<br>4. Security rules allow read access');
+                const questionsCollection = collection(db, 'questions');
+                const querySnapshot = await getDocs(questionsCollection);
+                
+                console.log('Firestore query completed. Documents found:', querySnapshot.size);
+                
+                if (querySnapshot.empty) {
+                    showError('No questions found in Firestore collection "questions".<br><br>Please verify:<br>1. Collection name is "questions"<br>2. Documents exist in the collection<br>3. Firestore Security Rules allow read access');
+                    return;
                 }
-            }, (error) => {
-                console.error('Firebase error:', error);
-                showError('Error loading questions: ' + error.message + '<br><br>Please check:<br>1. Firebase configuration<br>2. Internet connection<br>3. Database URL is correct<br>4. Security rules allow read access');
-            });
+                
+                allQuestions = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    allQuestions.push({
+                        id: doc.id,
+                        ...data
+                    });
+                });
+                
+                console.log('Total questions loaded:', allQuestions.length);
+                console.log('Sample question:', allQuestions[0]);
+                
+                if (allQuestions.length > 0) {
+                    populateTopics();
+                } else {
+                    showError('Questions collection is empty. Please add questions to Firestore.');
+                }
+                
+            } catch (error) {
+                console.error('Firestore error:', error);
+                showError('Error loading questions: ' + error.message + '<br><br>Please check:<br>1. Firebase configuration is correct<br>2. Internet connection<br>3. Firestore Security Rules allow read access<br>4. Collection name is "questions"');
+            }
         }
 
         // Populate topic dropdown
@@ -500,28 +509,36 @@
             const question = currentQuestions[currentQuestionIndex];
             questionCounter.textContent = `${currentQuestionIndex + 1}/${currentQuestions.length}`;
 
+            // Support both naming conventions
+            const questionText = question.question || question.Question || 'Question text missing';
+            const optionA = question.optionA || question['Option A'] || 'Option A missing';
+            const optionB = question.optionB || question['Option B'] || 'Option B missing';
+            const optionC = question.optionC || question['Option C'] || 'Option C missing';
+            const optionD = question.optionD || question['Option D'] || 'Option D missing';
+            const explanation = question.explanation || question.Explanation || 'No explanation available.';
+
             content.innerHTML = `
                 <div class="question-card">
                     <div class="question-text">
-                        <strong>Q${currentQuestionIndex + 1}:</strong> ${question.Question}
+                        <strong>Q${currentQuestionIndex + 1}:</strong> ${questionText}
                     </div>
                     <div class="options">
-                        <div class="option" data-option="A">
-                            <strong>A.</strong> ${question['Option A']}
+                        <div class="option" data-option="1">
+                            <strong>A.</strong> ${optionA}
                         </div>
-                        <div class="option" data-option="B">
-                            <strong>B.</strong> ${question['Option B']}
+                        <div class="option" data-option="2">
+                            <strong>B.</strong> ${optionB}
                         </div>
-                        <div class="option" data-option="C">
-                            <strong>C.</strong> ${question['Option C']}
+                        <div class="option" data-option="3">
+                            <strong>C.</strong> ${optionC}
                         </div>
-                        <div class="option" data-option="D">
-                            <strong>D.</strong> ${question['Option D']}
+                        <div class="option" data-option="4">
+                            <strong>D.</strong> ${optionD}
                         </div>
                     </div>
                     <div class="explanation" id="explanation">
                         <h4>Explanation:</h4>
-                        <p>${question.Explanation || 'No explanation available.'}</p>
+                        <p>${explanation}</p>
                     </div>
                 </div>
                 <div class="navigation">
@@ -549,7 +566,18 @@
 
             const selectedOption = optionElement.dataset.option;
             const question = currentQuestions[currentQuestionIndex];
-            const correctOption = question['Correct Option'];
+            
+            // Support both field names: correct_code (number) or 'Correct Option' (letter)
+            let correctOption = question.correct_code || question['Correct Option'];
+            
+            // Convert letter to number if needed (A=1, B=2, C=3, D=4)
+            if (typeof correctOption === 'string') {
+                const letterToNumber = {'A': '1', 'B': '2', 'C': '3', 'D': '4'};
+                correctOption = letterToNumber[correctOption.toUpperCase()] || correctOption;
+            }
+            
+            // Convert to string for comparison
+            correctOption = String(correctOption);
 
             // Disable all options
             options.forEach(opt => {
@@ -645,35 +673,6 @@
 
         // Initialize
         loadQuestions();
-    
-    window.testFirebase = function() {
-    console.log('Testing Firebase...');
-    console.log('Config:', firebaseConfig);
-    console.log('Database:', db);
-    alert('Check console (F12) for Firebase test results');
-};
-```
-
-## 📝 **What Console Should Show:**
-
-**If working correctly:**
-```
-Firebase initialized successfully
-Database URL: https://aidu-neet-physics-default-rtdb.firebaseio.com
-Attempting to load questions from Firebase...
-Firebase data received: {0: {...}, 1: {...}}
-Total questions loaded: 50
-Topics found: ["T01", "T02", "T03"]
-Topics populated successfully
-```
-
-**If there's an error:**
-```
-Firebase error: PERMISSION_DENIED
-```
-→ Fix Firebase Security Rules
-```
-Firebase data received: null
     </script>
 </body>
 </html>
