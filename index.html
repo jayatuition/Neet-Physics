@@ -572,16 +572,16 @@
                         <strong>Q${currentQuestionIndex + 1}:</strong> ${renderMath(questionText)}
                     </div>
                     <div class="options">
-                        <div class="option" data-option="1">
+                        <div class="option" data-option="0">
                             <strong>A.</strong> ${renderMath(optionA)}
                         </div>
-                        <div class="option" data-option="2">
+                        <div class="option" data-option="1">
                             <strong>B.</strong> ${renderMath(optionB)}
                         </div>
-                        <div class="option" data-option="3">
+                        <div class="option" data-option="2">
                             <strong>C.</strong> ${renderMath(optionC)}
                         </div>
-                        <div class="option" data-option="4">
+                        <div class="option" data-option="3">
                             <strong>D.</strong> ${renderMath(optionD)}
                         </div>
                     </div>
@@ -619,9 +619,9 @@
             // Support both field names: correct_code (number) or 'Correct Option' (letter)
             let correctOption = question.correct_code || question['Correct Option'];
             
-            // Convert letter to number if needed (A=1, B=2, C=3, D=4)
+            // Convert letter to number if needed (A=0, B=1, C=2, D=3)
             if (typeof correctOption === 'string') {
-                const letterToNumber = {'A': '1', 'B': '2', 'C': '3', 'D': '4'};
+                const letterToNumber = {'A': '0', 'B': '1', 'C': '2', 'D': '3'};
                 correctOption = letterToNumber[correctOption.toUpperCase()] || correctOption;
             }
             
