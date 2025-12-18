@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEET Physics Practice</title>
+    
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    
     <style>
         * {
             margin: 0;
@@ -162,6 +166,18 @@
             color: #333;
             margin-bottom: 25px;
             line-height: 1.6;
+        }
+
+        /* KaTeX math rendering styles */
+        .question-text .katex,
+        .option .katex,
+        .explanation .katex {
+            font-size: 1.1em;
+        }
+
+        .katex-display {
+            margin: 1em 0;
+            text-align: center;
         }
 
         .options {
@@ -352,6 +368,9 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
+        // KaTeX for math rendering
+        import katex from 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.mjs';
+
         // TODO: Replace with your Firebase configuration
         const firebaseConfig = {
           apiKey: "AIzaSyBGtJ708aHwtpjNWqls93xU7zkCDRV8P6c",
@@ -400,6 +419,36 @@
         const content = document.getElementById('content');
         const timer = document.getElementById('timer');
         const questionCounter = document.getElementById('questionCounter');
+
+        // Function to render LaTeX/KaTeX in text
+        function renderMath(text) {
+            if (!text) return text;
+            
+            // Replace inline math: $...$ with KaTeX rendered HTML
+            text = text.replace(/\$([^\$]+)\$/g, (match, math) => {
+                try {
+                    return katex.renderToString(math, { throwOnError: false });
+                } catch (e) {
+                    console.error('KaTeX error:', e);
+                    return match;
+                }
+            });
+            
+            // Replace display math: $...$ with KaTeX rendered HTML
+            text = text.replace(/\$\$([^\$]+)\$\$/g, (match, math) => {
+                try {
+                    return katex.renderToString(math, { 
+                        throwOnError: false,
+                        displayMode: true 
+                    });
+                } catch (e) {
+                    console.error('KaTeX error:', e);
+                    return match;
+                }
+            });
+            
+            return text;
+        }
 
         // Fetch questions from Firebase Firestore
         async function loadQuestions() {
@@ -520,25 +569,25 @@
             content.innerHTML = `
                 <div class="question-card">
                     <div class="question-text">
-                        <strong>Q${currentQuestionIndex + 1}:</strong> ${questionText}
+                        <strong>Q${currentQuestionIndex + 1}:</strong> ${renderMath(questionText)}
                     </div>
                     <div class="options">
                         <div class="option" data-option="1">
-                            <strong>A.</strong> ${optionA}
+                            <strong>A.</strong> ${renderMath(optionA)}
                         </div>
                         <div class="option" data-option="2">
-                            <strong>B.</strong> ${optionB}
+                            <strong>B.</strong> ${renderMath(optionB)}
                         </div>
                         <div class="option" data-option="3">
-                            <strong>C.</strong> ${optionC}
+                            <strong>C.</strong> ${renderMath(optionC)}
                         </div>
                         <div class="option" data-option="4">
-                            <strong>D.</strong> ${optionD}
+                            <strong>D.</strong> ${renderMath(optionD)}
                         </div>
                     </div>
                     <div class="explanation" id="explanation">
                         <h4>Explanation:</h4>
-                        <p>${explanation}</p>
+                        <p>${renderMath(explanation)}</p>
                     </div>
                 </div>
                 <div class="navigation">
