@@ -622,24 +622,27 @@
             
             // Convert letter to number if needed (A=0, B=1, C=2, D=3)
             if (typeof correctOption === 'string') {
-                const letterToNumber = {'A': '0', 'B': '1', 'C': '2', 'D': '3'};
+                const letterToNumber = {'A': 0, 'B': 1, 'C': 2, 'D': 3};
                 correctOption = letterToNumber[correctOption.toUpperCase()] || correctOption;
             }
             
             // Convert to string for comparison
-            correctOption = String(correctOption);
-
+            correctOption = Number(correctOption);
+            //
+            const selectedOptionNum = Number(selectedOption);
+            // added new
             // Disable all options
             options.forEach(opt => {
                 opt.classList.add('disabled');
-                if (opt.dataset.option === correctOption) {
+                //Number added
+                if (Number(opt.dataset.option) === correctOption) {
                     opt.classList.add('correct');
                 }
             });
 
             // Mark selected option
             optionElement.classList.add('selected');
-            if (selectedOption !== correctOption) {
+            if (selectedOptionNum !== correctOption) {
                 optionElement.classList.add('incorrect');
                 incorrectAnswers++;
             } else {
