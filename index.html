@@ -207,13 +207,13 @@
         }
 
         .option.correct {
-            border-color: #28a745;
-            background: #d4edda;
+            border-color: #28a745 !important;
+            background: #d4edda !important;
         }
 
         .option.incorrect {
-            border-color: #dc3545;
-            background: #f8d7da;
+            border-color: #dc3545 !important;
+            background: #f8d7da !important;
         }
 
         .option.disabled {
@@ -373,13 +373,13 @@
 
         // TODO: Replace with your Firebase configuration
         const firebaseConfig = {
-          apiKey: "AIzaSyBGtJ708aHwtpjNWqls93xU7zkCDRV8P6c",
-          authDomain: "aidu-neet-physics.firebaseapp.com",
-          projectId: "aidu-neet-physics",
-          storageBucket: "aidu-neet-physics.firebasestorage.app",
-          messagingSenderId: "1090098670532",
-          appId: "1:1090098670532:web:61c7cdd518b8d4a61d5291",
-          };
+  apiKey: "AIzaSyBGtJ708aHwtpjNWqls93xU7zkCDRV8P6c",
+  authDomain: "aidu-neet-physics.firebaseapp.com",
+  projectId: "aidu-neet-physics",
+  storageBucket: "aidu-neet-physics.firebasestorage.app",
+  messagingSenderId: "1090098670532",
+  appId: "1:1090098670532:web:61c7cdd518b8d4a61d5291",
+  };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -390,17 +390,16 @@
 
         // Topic ID to Name mapping
         const topicMap = {
-            'T01': 'Units and Dimensions',
-            'T02': 'Kinematics',
-            'T03': 'Laws of Motion',
-            'T04': 'Work Energy Power & Circular Motion',
-            'T05': 'Centere of Mass',
-            'T06': 'Rotational Motion',
-            'T07': 'Gravitation',
-            'T08': 'Properties of Matter& fFuids',
-            'T09': 'Heat & Thermodynamics',
-            'T10': 'Oscillation',
-            'T10': 'Sound Wave'
+            'T01': 'Mechanics',
+            'T02': 'Thermodynamics',
+            'T03': 'Waves and Optics',
+            'T04': 'Electricity and Magnetism',
+            'T05': 'Modern Physics',
+            'T06': 'Kinematics',
+            'T07': 'Laws of Motion',
+            'T08': 'Work, Energy and Power',
+            'T09': 'Rotational Motion',
+            'T10': 'Gravitation'
         };
 
         // Global variables
@@ -614,40 +613,103 @@
             const options = document.querySelectorAll('.option');
             if (options[0].classList.contains('disabled')) return;
 
-            const selectedOption = optionElement.dataset.option;
+            const selectedOption = optionElement.dataset.option; // This is a string: "0", "1", "2", "3"
             const question = currentQuestions[currentQuestionIndex];
             
+            console.log('=== DEBUG START ===');
+            console.log('Selected option (from HTML):', selectedOption, 'Type:', typeof selectedOption);
+            
             // Support both field names: correct_code (number) or 'Correct Option' (letter)
-            let correctOption = question.correct_code || question['Correct Option'];
+            let correctOption = question.correct_code;
+            
+            console.log('correct_code from Firestore:', correctOption, 'Type:', typeof correctOption);
+            
+            // Fallback to 'Correct Option' if correct_code is missing
+            if (correctOption === undefined || correctOption === null) {
+                correctOption = question['Correct Option'] || question.correctOption || question.correct_option;
+                console.log('Using fallback field:', correctOption);
+            }
+            
+            // Handle missing correct answer
+            if (correctOption === undefined || correctOption === null) {
+                console.error('ERROR: No correct answer found for this question!');
+                alert('Error: This question is missing the correct answer in the database. Skipping to next question.');
+                document.getElementById('nextBtn').style.display = 'block';
+                return;
+            }
             
             // Convert letter to number if needed (A=0, B=1, C=2, D=3)
             if (typeof correctOption === 'string') {
+                const upperCorrect = correctOption.toUpperCase().trim();
                 const letterToNumber = {'A': 0, 'B': 1, 'C': 2, 'D': 3};
-                correctOption = letterToNumber[correctOption.toUpperCase()] || correctOption;
+                
+                console.log('Converting letter to number. Input:', upperCorrect);
+                
+                if (letterToNumber.hasOwnProperty(upperCorrect)) {
+                    correctOption = letterToNumber[upperCorrect];
+                    console.log('Converted to:', correctOption);
+                } else {
+                    // Try to parse as number string
+                    const parsed = parseInt(correctOption);
+                    if (!isNaN(parsed)) {
+                        correctOption = parsed;
+                        console.log('Parsed string as number:', correctOption);
+                    } else {
+                        console.error('ERROR: Invalid correct option format:', correctOption);
+                        alert('Error: Invalid correct answer format in database.');
+                        return;
+                    }
+                }
             }
             
-            // Convert to string for comparison
-            correctOption = Number(correctOption);
-            //
-            const selectedOptionNum = Number(selectedOption);
-            // added new
-            // Disable all options
+            // At this point, correctOption should be a number (0, 1, 2, or 3)
+            console.log('correctOption after conversion (should be number):', correctOption, 'Type:', typeof correctOption);
+            
+            // Validate the number
+            const numericCorrect = Number(correctOption);
+            console.log('After Number() conversion:', numericCorrect);
+            
+            if (isNaN(numericCorrect) || numericCorrect < 0 || numericCorrect > 3) {
+                console.error('ERROR: Correct option out of range:', numericCorrect);
+                alert('Error: Invalid correct answer value (must be 0-3 or A-D)');
+                return;
+            }
+            
+            // Convert BOTH to strings for comparison
+            const correctOptionStr = String(numericCorrect);
+            const selectedOptionStr = String(selectedOption);
+            
+            console.log('Final comparison:');
+            console.log('  Selected (string):', selectedOptionStr);
+            console.log('  Correct (string):', correctOptionStr);
+            console.log('  Are they equal?', selectedOptionStr === correctOptionStr);
+            console.log('=== DEBUG END ===');
+
+            // Disable all options and mark the correct one
             options.forEach(opt => {
                 opt.classList.add('disabled');
-                //Number added
-                if (Number(opt.dataset.option) === correctOption) {
+                const optionValue = String(opt.dataset.option);
+                
+                console.log('  Checking option:', optionValue, '=== correct?', correctOptionStr, '→', optionValue === correctOptionStr);
+                
+                if (optionValue === correctOptionStr) {
                     opt.classList.add('correct');
+                    console.log('  ✓ Added "correct" class to option', optionValue);
                 }
             });
 
             // Mark selected option
             optionElement.classList.add('selected');
-            if (selectedOptionNum !== correctOption) {
+            console.log('Added "selected" class to option', selectedOptionStr);
+            
+            if (selectedOptionStr !== correctOptionStr) {
                 optionElement.classList.add('incorrect');
                 incorrectAnswers++;
+                console.log('✗ User answer is INCORRECT');
             } else {
                 correctAnswers++;
                 score++;
+                console.log('✓ User answer is CORRECT');
             }
 
             // Show explanation and next button
