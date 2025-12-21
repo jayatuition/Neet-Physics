@@ -3,343 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET Physics Practice</title>
-    
-    <!-- KaTeX CSS -->
+    <title>NEET Practice - Physics</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .logo {
-            position: absolute;
-            right: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 50%;
-            display: none; /* Will show when logo is added */
-        }
-
-        .controls {
-            display: flex;
-            justify-content: space-around;
-            padding: 20px;
-            background: #f8f9fa;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .control-group label {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        select, .timer, .question-counter {
-            padding: 10px 15px;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            font-size: 1em;
-            background: white;
-        }
-
-        select {
-            cursor: pointer;
-            min-width: 200px;
-        }
-
-        .timer {
-            font-weight: bold;
-            color: #667eea;
-            min-width: 100px;
-            text-align: center;
-        }
-
-        .question-counter {
-            font-weight: bold;
-            color: #764ba2;
-            min-width: 100px;
-            text-align: center;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .start-screen {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .start-screen h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .start-screen p {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-            margin-left: 10px;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .question-card {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-        }
-
-        .question-text {
-            font-size: 1.3em;
-            color: #333;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        /* KaTeX math rendering styles */
-        .question-text .katex,
-        .option .katex,
-        .explanation .katex {
-            font-size: 1.1em;
-        }
-
-        .katex-display {
-            margin: 1em 0;
-            text-align: center;
-        }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .option {
-            padding: 15px 20px;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: white;
-            font-size: 1.1em;
-        }
-
-        .option:hover {
-            border-color: #667eea;
-            background: #f0f2ff;
-        }
-
-        .option.selected {
-            border-color: #667eea;
-            background: #e7eaff;
-        }
-
-        .option.correct {
-            border-color: #28a745 !important;
-            background: #d4edda !important;
-        }
-
-        .option.incorrect {
-            border-color: #dc3545 !important;
-            background: #f8d7da !important;
-        }
-
-        .option.disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .explanation {
-            margin-top: 20px;
-            padding: 20px;
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            border-radius: 5px;
-            display: none;
-        }
-
-        .explanation.show {
-            display: block;
-        }
-
-        .explanation h4 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .explanation p {
-            color: #856404;
-            line-height: 1.6;
-        }
-
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-
-        .score-screen {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .score-screen h2 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-
-        .score-display {
-            font-size: 4em;
-            color: #667eea;
-            font-weight: bold;
-            margin: 30px 0;
-        }
-
-        .score-details {
-            display: flex;
-            justify-content: space-around;
-            margin: 30px 0;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .score-item {
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            min-width: 150px;
-        }
-
-        .score-item h3 {
-            color: #666;
-            font-size: 1em;
-            margin-bottom: 10px;
-        }
-
-        .score-item p {
-            font-size: 2em;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 50px;
-            font-size: 1.5em;
-            color: #667eea;
-        }
-
-        .error {
-            text-align: center;
-            padding: 50px;
-            color: #dc3545;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; position: relative; }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .breadcrumb { font-size: 0.9em; opacity: 0.9; margin-top: 10px; }
+        .breadcrumb button { background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; margin: 0 3px; font-size: 0.9em; }
+        .breadcrumb button:hover { background: rgba(255,255,255,0.3); }
+        .controls { display: flex; justify-content: space-around; padding: 20px; background: #f8f9fa; flex-wrap: wrap; gap: 15px; }
+        .control-group { display: flex; flex-direction: column; align-items: center; }
+        .control-group label { font-weight: 600; margin-bottom: 5px; color: #333; }
+        select, .timer, .question-counter { padding: 10px 15px; border: 2px solid #667eea; border-radius: 8px; font-size: 1em; background: white; }
+        select { cursor: pointer; min-width: 200px; }
+        .timer { font-weight: bold; color: #667eea; min-width: 100px; text-align: center; }
+        .question-counter { font-weight: bold; color: #764ba2; min-width: 100px; text-align: center; }
+        .content { padding: 30px; min-height: 400px; }
+        .selection-screen { text-align: center; padding: 40px 20px; }
+        .selection-screen h2 { color: #333; margin-bottom: 30px; font-size: 2em; }
+        .selection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 30px; }
+        .selection-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 30px; border-radius: 15px; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .selection-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .selection-card .icon { font-size: 3em; margin-bottom: 15px; }
+        .selection-card h3 { font-size: 1.8em; margin-bottom: 10px; }
+        .selection-card p { opacity: 0.9; font-size: 0.95em; }
+        .btn { padding: 12px 30px; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; transition: all 0.3s; font-weight: 600; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-secondary { background: #6c757d; color: white; margin-left: 10px; }
+        .btn-secondary:hover { background: #5a6268; }
+        .question-card { background: #f8f9fa; padding: 25px; border-radius: 10px; margin-bottom: 25px; }
+        .question-text { font-size: 1.3em; color: #333; margin-bottom: 25px; line-height: 1.6; }
+        .question-text .katex, .option .katex, .explanation .katex { font-size: 1.1em; }
+        .katex-display { margin: 1em 0; text-align: center; }
+        .options { display: flex; flex-direction: column; gap: 15px; }
+        .option { padding: 15px 20px; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: white; font-size: 1.1em; }
+        .option:hover { border-color: #667eea; background: #f0f2ff; }
+        .option.selected { border-color: #667eea; background: #e7eaff; }
+        .option.correct { border-color: #28a745 !important; background: #d4edda !important; }
+        .option.incorrect { border-color: #dc3545 !important; background: #f8d7da !important; }
+        .option.disabled { cursor: not-allowed; opacity: 0.7; }
+        .explanation { margin-top: 20px; padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px; display: none; }
+        .explanation.show { display: block; }
+        .explanation h4 { color: #856404; margin-bottom: 10px; }
+        .explanation p { color: #856404; line-height: 1.6; }
+        .navigation { display: flex; justify-content: space-between; margin-top: 30px; }
+        .score-screen { text-align: center; padding: 40px; }
+        .score-screen h2 { color: #333; font-size: 2.5em; margin-bottom: 20px; }
+        .score-display { font-size: 4em; color: #667eea; font-weight: bold; margin: 30px 0; }
+        .score-details { display: flex; justify-content: space-around; margin: 30px 0; flex-wrap: wrap; gap: 20px; }
+        .score-item { padding: 20px; background: #f8f9fa; border-radius: 10px; min-width: 150px; }
+        .score-item h3 { color: #666; font-size: 1em; margin-bottom: 10px; }
+        .score-item p { font-size: 2em; font-weight: bold; color: #333; }
+        .loading { text-align: center; padding: 50px; font-size: 1.5em; color: #667eea; }
+        .error { text-align: center; padding: 50px; color: #dc3545; }
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .controls {
-                flex-direction: column;
-            }
-
-            .question-text {
-                font-size: 1.1em;
-            }
-
-            .option {
-                font-size: 1em;
-            }
+            .header h1 { font-size: 1.8em; }
+            .controls { flex-direction: column; }
+            .question-text { font-size: 1.1em; }
+            .option { font-size: 1em; }
+            .selection-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>NEET PHYSICS PRACTICE</h1>
-            <div class="logo" id="logo"></div>
+            <h1 id="mainTitle">NEET PRACTICE</h1>
+            <div class="breadcrumb" id="breadcrumb" style="display: none;"></div>
         </div>
-
-        <div class="controls">
+        <div class="controls" id="controls" style="display: none;">
             <div class="control-group">
                 <label for="topicSelect">Select Topic:</label>
-                <select id="topicSelect">
-                    <option value="">Loading topics...</option>
-                </select>
+                <select id="topicSelect"><option value="">Select a topic...</option></select>
             </div>
             <div class="control-group">
                 <label>Timer:</label>
@@ -350,445 +89,286 @@
                 <div class="question-counter" id="questionCounter">0/0</div>
             </div>
         </div>
-
         <div class="content" id="content">
-            <div class="start-screen">
-                <h2>Welcome to NEET Physics Practice!</h2>
-                <p>Select a topic from the dropdown above and click Start to begin your practice session.</p>
-                <p id="connectionStatus" style="color: #667eea; font-size: 0.9em; margin-top: 10px;">
-                    🔄 Connecting to Firebase...
-                </p>
-                <button class="btn btn-primary" id="startBtn" disabled>Start Quiz</button>
+            <div class="selection-screen">
+                <h2>Select Subject</h2>
+                <div class="selection-grid" id="subjectSelection"></div>
             </div>
         </div>
     </div>
-
     <script type="module">
-        // Firebase Configuration
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-        // KaTeX for math rendering
         import katex from 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.mjs';
 
-        // TODO: Replace with your Firebase configuration
         const firebaseConfig = {
-  apiKey: "AIzaSyBGtJ708aHwtpjNWqls93xU7zkCDRV8P6c",
-  authDomain: "aidu-neet-physics.firebaseapp.com",
-  projectId: "aidu-neet-physics",
-  storageBucket: "aidu-neet-physics.firebasestorage.app",
-  messagingSenderId: "1090098670532",
-  appId: "1:1090098670532:web:61c7cdd518b8d4a61d5291",
-  };
+  	apiKey: "AIzaSyBGtJ708aHwtpjNWqls93xU7zkCDRV8P6c",
+  	authDomain: "aidu-neet-physics.firebaseapp.com",
+ 	 projectId: "aidu-neet-physics",
+  	storageBucket: "aidu-neet-physics.firebasestorage.app",
+ 	 messagingSenderId: "1090098670532",
+  	appId: "1:1090098670532:web:61c7cdd518b8d4a61d5291",
+ 	 };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        
-        console.log('Firebase initialized successfully');
-        console.log('Using Cloud Firestore');
 
-        // Topic ID to Name mapping
-        const topicMap = {
-            'T01': 'Units & Dimension',
-            'T02': 'Kinematics',
-            'T03': 'Laws of Motion',
-            'T04': 'Work, Energy and Power circular motion',
-            'T05': 'Center of Motion',
-            'T06': 'Rotational Motion',
-            'T07': 'Gravitation',
-            'T08': 'Properties Matter Fluids',
-            'T09': 'Heat & Thermodynamics',
-            'T10': 'Oscillation',
-	        'T11': 'Sound Wave'
+        const subjectStructure = {
+            physics: {
+                name: "Physics", icon: "⚛️",
+                classes: {
+                    class11: {
+                        name: "Class 11",
+                        sections: {
+                            section1: { name: "Section I", description: "Mechanics & Motion",
+                                topics: {'T01':'Units & Dimension','T02':'Kinematics','T03':'Laws of Motion','T04':'Work, Energy & Power','T05':'Center of Mass','T06':'Rotational Motion','T07':'Gravitation'}
+                            },
+                            section2: { name: "Section II", description: "Properties & Waves",
+                                topics: {'T08':'Properties of Matter & Fluids','T09':'Heat & Thermodynamics','T10':'Oscillation','T11':'Sound Wave'}
+                            }
+                        }
+                    },
+                    class12: {
+                        name: "Class 12",
+                        sections: {
+                            section1: { name: "Section I", description: "Electricity & Magnetism",
+                                topics: {'T12':'Electrostatics','T13':'Current Electricity','T14':'Magnetics','T15':'EMI','T16':'Alternating Current','T17':'EM Waves'}
+                            },
+                            section2: { name: "Section II", description: "Optics & Modern Physics",
+                                topics: {'T18':'Ray Optics','T19':'Wave Optics','T20':'Modern Physics','T21':'Semiconductors'}
+                            }
+                        }
+                    }
+                }
+            },
+            chemistry: { name: "Chemistry", icon: "🧪", classes: {}, comingSoon: true },
+            mathematics: { name: "Mathematics", icon: "📐", classes: {}, comingSoon: true }
         };
 
-        // Global variables
-        let allQuestions = [];
-        let currentQuestions = [];
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let correctAnswers = 0;
-        let incorrectAnswers = 0;
-        let timerInterval = null;
-        let startTime = null;
-        let selectedTopic = '';
+        let allQuestions=[], currentQuestions=[], currentQuestionIndex=0, score=0, correctAnswers=0, incorrectAnswers=0, timerInterval=null, startTime=null;
+        let selectedSubject=null, selectedClass=null, selectedSection=null, selectedTopic=null;
+        const content=document.getElementById('content'), controls=document.getElementById('controls'), topicSelect=document.getElementById('topicSelect');
+        const timer=document.getElementById('timer'), questionCounter=document.getElementById('questionCounter'), breadcrumb=document.getElementById('breadcrumb'), mainTitle=document.getElementById('mainTitle');
 
-        // DOM elements
-        const topicSelect = document.getElementById('topicSelect');
-        const startBtn = document.getElementById('startBtn');
-        const content = document.getElementById('content');
-        const timer = document.getElementById('timer');
-        const questionCounter = document.getElementById('questionCounter');
+        showSubjectSelection();
 
-        // Function to render LaTeX/KaTeX in text
-        function renderMath(text) {
-            if (!text) return text;
-            
-            // Replace inline math: $...$ with KaTeX rendered HTML
-            text = text.replace(/\$([^\$]+)\$/g, (match, math) => {
-                try {
-                    return katex.renderToString(math, { throwOnError: false });
-                } catch (e) {
-                    console.error('KaTeX error:', e);
-                    return match;
-                }
+        function showSubjectSelection() {
+            const grid = document.getElementById('subjectSelection');
+            grid.innerHTML = '';
+            Object.keys(subjectStructure).forEach(key => {
+                const s = subjectStructure[key];
+                const card = document.createElement('div');
+                card.className = 'selection-card';
+                if (s.comingSoon) { card.style.opacity='0.6'; card.style.cursor='not-allowed'; }
+                const icon = document.createElement('div'); icon.className='icon'; icon.textContent=s.icon;
+                const title = document.createElement('h3'); title.textContent=s.name;
+                const desc = document.createElement('p'); desc.textContent=s.comingSoon?'Coming Soon':'Click to start';
+                card.appendChild(icon); card.appendChild(title); card.appendChild(desc);
+                if (!s.comingSoon) card.onclick = () => selectSubject(key);
+                grid.appendChild(card);
             });
-            
-            // Replace display math: $...$ with KaTeX rendered HTML
-            text = text.replace(/\$\$([^\$]+)\$\$/g, (match, math) => {
-                try {
-                    return katex.renderToString(math, { 
-                        throwOnError: false,
-                        displayMode: true 
-                    });
-                } catch (e) {
-                    console.error('KaTeX error:', e);
-                    return match;
-                }
-            });
-            
-            return text;
         }
 
-        // Fetch questions from Firebase Firestore
+        function selectSubject(key) {
+            selectedSubject = key;
+            mainTitle.textContent = 'NEET ' + subjectStructure[key].name.toUpperCase() + ' PRACTICE';
+            updateBreadcrumb();
+            showClassSelection();
+            loadQuestions();
+        }
+
+        function showClassSelection() {
+            const classes = subjectStructure[selectedSubject].classes;
+            content.innerHTML = '<div class="selection-screen"><h2>Select Class</h2><div class="selection-grid" id="classSelection"></div></div>';
+            const grid = document.getElementById('classSelection');
+            Object.keys(classes).forEach(key => {
+                const cls = classes[key];
+                const card = document.createElement('div');
+                card.className = 'selection-card';
+                card.innerHTML = '<div class="icon">📘</div><h3>'+cls.name+'</h3><p>'+Object.keys(cls.sections).length+' Sections</p>';
+                card.onclick = () => selectClass(key);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectClass(key) {
+            selectedClass = key;
+            updateBreadcrumb();
+            showSectionSelection();
+        }
+
+        function showSectionSelection() {
+            const sections = subjectStructure[selectedSubject].classes[selectedClass].sections;
+            content.innerHTML = '<div class="selection-screen"><h2>Select Section</h2><div class="selection-grid" id="sectionSelection"></div></div>';
+            const grid = document.getElementById('sectionSelection');
+            Object.keys(sections).forEach(key => {
+                const sec = sections[key];
+                const count = Object.keys(sec.topics).length;
+                const card = document.createElement('div');
+                card.className = 'selection-card';
+                card.innerHTML = '<div class="icon">📚</div><h3>'+sec.name+'</h3><p>'+sec.description+'</p><p style="margin-top:10px;font-size:0.9em;">'+count+' Topics</p>';
+                card.onclick = () => selectSection(key);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectSection(key) {
+            selectedSection = key;
+            updateBreadcrumb();
+            showTopicSelection();
+        }
+
+        function showTopicSelection() {
+            const section = subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection];
+            controls.style.display = 'flex';
+            topicSelect.innerHTML = '<option value="">-- Select a Topic --</option>';
+            Object.keys(section.topics).forEach(id => {
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.textContent = section.topics[id];
+                topicSelect.appendChild(opt);
+            });
+            content.innerHTML = '<div class="selection-screen"><h2>Select Topic & Start Quiz</h2><p style="color:#666;margin-top:10px;">Choose a topic from the dropdown above and click Start to begin.</p><button class="btn btn-primary" id="startBtn" style="margin-top:30px;" disabled>Start Quiz</button></div>';
+            const startBtn = document.getElementById('startBtn');
+            topicSelect.onchange = () => { startBtn.disabled = !topicSelect.value; };
+            startBtn.onclick = startQuiz;
+        }
+
+        function updateBreadcrumb() {
+            let html = '';
+            if (selectedSubject) {
+                html += '<button onclick="window.location.reload()">🏠 Home</button> > '+subjectStructure[selectedSubject].name;
+            }
+            if (selectedClass) {
+                html += ' > <button onclick="resetToClass()">'+subjectStructure[selectedSubject].classes[selectedClass].name+'</button>';
+            }
+            if (selectedSection) {
+                html += ' > <button onclick="resetToSection()">'+subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection].name+'</button>';
+            }
+            if (selectedTopic) {
+                html += ' > '+subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection].topics[selectedTopic];
+            }
+            breadcrumb.innerHTML = html;
+            breadcrumb.style.display = selectedSubject ? 'block' : 'none';
+        }
+
+        window.resetToClass = function() {
+            selectedClass=null; selectedSection=null; selectedTopic=null; controls.style.display='none';
+            updateBreadcrumb(); showClassSelection();
+        };
+
+        window.resetToSection = function() {
+            selectedSection=null; selectedTopic=null; controls.style.display='none';
+            updateBreadcrumb(); showSectionSelection();
+        };
+
         async function loadQuestions() {
             try {
-                console.log('Attempting to load questions from Firestore...');
-                
-                const questionsCollection = collection(db, 'questions');
-                const querySnapshot = await getDocs(questionsCollection);
-                
-                console.log('Firestore query completed. Documents found:', querySnapshot.size);
-                
-                if (querySnapshot.empty) {
-                    showError('No questions found in Firestore collection "questions".<br><br>Please verify:<br>1. Collection name is "questions"<br>2. Documents exist in the collection<br>3. Firestore Security Rules allow read access');
-                    return;
-                }
-                
+                const snap = await getDocs(collection(db, 'questions'));
                 allQuestions = [];
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    allQuestions.push({
-                        id: doc.id,
-                        ...data
-                    });
-                });
-                
-                console.log('Total questions loaded:', allQuestions.length);
-                console.log('Sample question:', allQuestions[0]);
-                
-                if (allQuestions.length > 0) {
-                    populateTopics();
-                } else {
-                    showError('Questions collection is empty. Please add questions to Firestore.');
-                }
-                
-            } catch (error) {
-                console.error('Firestore error:', error);
-                showError('Error loading questions: ' + error.message + '<br><br>Please check:<br>1. Firebase configuration is correct<br>2. Internet connection<br>3. Firestore Security Rules allow read access<br>4. Collection name is "questions"');
+                snap.forEach(doc => allQuestions.push({id:doc.id, ...doc.data()}));
+                console.log('Loaded:',allQuestions.length);
+            } catch (e) {
+                console.error(e);
+                showError('Error: '+e.message);
             }
         }
 
-        // Populate topic dropdown
-        function populateTopics() {
-            const topics = [...new Set(allQuestions.map(q => q.topic_id))].sort();
-            console.log('Topics found:', topics);
-            
-            topicSelect.innerHTML = '<option value="">-- Select a Topic --</option>';
-            
-            topics.forEach(topicId => {
-                const option = document.createElement('option');
-                option.value = topicId;
-                option.textContent = topicMap[topicId] || `Topic ${topicId}`;
-                topicSelect.appendChild(option);
-            });
-
-            startBtn.disabled = false;
-            
-            // Update connection status
-            const statusEl = document.getElementById('connectionStatus');
-            if (statusEl) {
-                statusEl.innerHTML = '✅ Connected! ' + allQuestions.length + ' questions loaded';
-                statusEl.style.color = '#28a745';
-            }
-            
-            console.log('Topics populated successfully');
-        }
-
-        // Start quiz
         function startQuiz() {
             selectedTopic = topicSelect.value;
-            if (!selectedTopic) {
-                alert('Please select a topic first!');
-                return;
-            }
-
+            if (!selectedTopic) { alert('Select a topic!'); return; }
             currentQuestions = allQuestions.filter(q => q.topic_id === selectedTopic);
-            if (currentQuestions.length === 0) {
-                alert('No questions available for this topic!');
-                return;
-            }
-
-            currentQuestionIndex = 0;
-            score = 0;
-            correctAnswers = 0;
-            incorrectAnswers = 0;
-            startTimer();
-            showQuestion();
+            if (!currentQuestions.length) { alert('No questions!'); return; }
+            currentQuestionIndex=0; score=0; correctAnswers=0; incorrectAnswers=0;
+            updateBreadcrumb(); startTimer(); showQuestion();
         }
 
-        // Start timer
         function startTimer() {
             startTime = Date.now();
             timerInterval = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                const minutes = Math.floor(elapsed / 60);
-                const seconds = elapsed % 60;
-                timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                const e = Math.floor((Date.now()-startTime)/1000);
+                const m = Math.floor(e/60), s = e%60;
+                timer.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
             }, 1000);
         }
 
-        // Show question
+        function renderMath(t) {
+            if (!t) return t;
+            t = t.replace(/\$\$([^\$]+)\$\$/g, (m,x) => { try { return katex.renderToString(x,{throwOnError:false,displayMode:true}); } catch(e) { return m; } });
+            t = t.replace(/\$([^\$]+)\$/g, (m,x) => { try { return katex.renderToString(x,{throwOnError:false}); } catch(e) { return m; } });
+            return t;
+        }
+
         function showQuestion() {
-            if (currentQuestionIndex >= currentQuestions.length) {
-                showScore();
-                return;
-            }
-
-            const question = currentQuestions[currentQuestionIndex];
-            questionCounter.textContent = `${currentQuestionIndex + 1}/${currentQuestions.length}`;
-
-            // Support both naming conventions
-            const questionText = question.question || question.Question || 'Question text missing';
-            const optionA = question.optionA || question['Option A'] || 'Option A missing';
-            const optionB = question.optionB || question['Option B'] || 'Option B missing';
-            const optionC = question.optionC || question['Option C'] || 'Option C missing';
-            const optionD = question.optionD || question['Option D'] || 'Option D missing';
-            const explanation = question.explanation || question.Explanation || 'No explanation available.';
-
-            content.innerHTML = `
-                <div class="question-card">
-                    <div class="question-text">
-                        <strong>Q${currentQuestionIndex + 1}:</strong> ${renderMath(questionText)}
-                    </div>
-                    <div class="options">
-                        <div class="option" data-option="0">
-                            <strong>A.</strong> ${renderMath(optionA)}
-                        </div>
-                        <div class="option" data-option="1">
-                            <strong>B.</strong> ${renderMath(optionB)}
-                        </div>
-                        <div class="option" data-option="2">
-                            <strong>C.</strong> ${renderMath(optionC)}
-                        </div>
-                        <div class="option" data-option="3">
-                            <strong>D.</strong> ${renderMath(optionD)}
-                        </div>
-                    </div>
-                    <div class="explanation" id="explanation">
-                        <h4>Explanation:</h4>
-                        <p>${renderMath(explanation)}</p>
-                    </div>
-                </div>
-                <div class="navigation">
-                    <button class="btn btn-secondary" id="exitBtn">Exit Quiz</button>
-                    <button class="btn btn-primary" id="nextBtn" style="display:none;">Next Question</button>
-                </div>
-            `;
-
-            // Add event listeners
-            document.querySelectorAll('.option').forEach(option => {
-                option.addEventListener('click', () => selectOption(option));
-            });
-
+            if (currentQuestionIndex >= currentQuestions.length) { showScore(); return; }
+            const q = currentQuestions[currentQuestionIndex];
+            questionCounter.textContent = (currentQuestionIndex+1)+'/'+currentQuestions.length;
+            const qt = q.question||q.Question||'?';
+            const oa = q.optionA||q['Option A']||'A?';
+            const ob = q.optionB||q['Option B']||'B?';
+            const oc = q.optionC||q['Option C']||'C?';
+            const od = q.optionD||q['Option D']||'D?';
+            const ex = q.explanation||q.Explanation||'';
+            content.innerHTML = '<div class="question-card"><div class="question-text"><strong>Q'+(currentQuestionIndex+1)+':</strong> '+renderMath(qt)+'</div><div class="options"><div class="option" data-option="0"><strong>A.</strong> '+renderMath(oa)+'</div><div class="option" data-option="1"><strong>B.</strong> '+renderMath(ob)+'</div><div class="option" data-option="2"><strong>C.</strong> '+renderMath(oc)+'</div><div class="option" data-option="3"><strong>D.</strong> '+renderMath(od)+'</div></div><div class="explanation" id="explanation"><h4>Explanation:</h4><p>'+renderMath(ex)+'</p></div></div><div class="navigation"><button class="btn btn-secondary" id="exitBtn">Exit Quiz</button><button class="btn btn-primary" id="nextBtn" style="display:none;">Next Question</button></div>';
+            document.querySelectorAll('.option').forEach(o => o.addEventListener('click', () => selectOption(o)));
             document.getElementById('exitBtn').addEventListener('click', exitQuiz);
-            const nextBtn = document.getElementById('nextBtn');
-            if (nextBtn) {
-                nextBtn.addEventListener('click', nextQuestion);
-            }
+            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
         }
 
-        // Select option
-        function selectOption(optionElement) {
-            const options = document.querySelectorAll('.option');
-            if (options[0].classList.contains('disabled')) return;
-
-            const selectedOption = optionElement.dataset.option; // This is a string: "0", "1", "2", "3"
-            const question = currentQuestions[currentQuestionIndex];
-            
-            console.log('=== DEBUG START ===');
-            console.log('Selected option (from HTML):', selectedOption, 'Type:', typeof selectedOption);
-            
-            // Support both field names: correct_code (number) or 'Correct Option' (letter)
-            let correctOption = question.correct_code;
-            
-            console.log('correct_code from Firestore:', correctOption, 'Type:', typeof correctOption);
-            
-            // Fallback to 'Correct Option' if correct_code is missing
-            if (correctOption === undefined || correctOption === null) {
-                correctOption = question['Correct Option'] || question.correctOption || question.correct_option;
-                console.log('Using fallback field:', correctOption);
+        function selectOption(el) {
+            const opts = document.querySelectorAll('.option');
+            if (opts[0].classList.contains('disabled')) return;
+            const sel = el.dataset.option;
+            const q = currentQuestions[currentQuestionIndex];
+            let cor = q.correct_code;
+            if (cor===undefined||cor===null) cor = q['Correct Option']||q.correctOption||q.correct_option;
+            if (cor===undefined||cor===null) { alert('Missing answer!'); document.getElementById('nextBtn').style.display='block'; return; }
+            if (typeof cor==='string') {
+                const u = cor.toUpperCase().trim();
+                const m = {'A':0,'B':1,'C':2,'D':3};
+                if (m.hasOwnProperty(u)) cor=m[u];
+                else { const p=parseInt(cor); if (!isNaN(p)) cor=p; }
             }
-            
-            // Handle missing correct answer
-            if (correctOption === undefined || correctOption === null) {
-                console.error('ERROR: No correct answer found for this question!');
-                alert('Error: This question is missing the correct answer in the database. Skipping to next question.');
-                document.getElementById('nextBtn').style.display = 'block';
-                return;
-            }
-            
-            // Convert letter to number if needed (A=0, B=1, C=2, D=3)
-            if (typeof correctOption === 'string') {
-                const upperCorrect = correctOption.toUpperCase().trim();
-                const letterToNumber = {'A': 0, 'B': 1, 'C': 2, 'D': 3};
-                
-                console.log('Converting letter to number. Input:', upperCorrect);
-                
-                if (letterToNumber.hasOwnProperty(upperCorrect)) {
-                    correctOption = letterToNumber[upperCorrect];
-                    console.log('Converted to:', correctOption);
-                } else {
-                    // Try to parse as number string
-                    const parsed = parseInt(correctOption);
-                    if (!isNaN(parsed)) {
-                        correctOption = parsed;
-                        console.log('Parsed string as number:', correctOption);
-                    } else {
-                        console.error('ERROR: Invalid correct option format:', correctOption);
-                        alert('Error: Invalid correct answer format in database.');
-                        return;
-                    }
-                }
-            }
-            
-            // At this point, correctOption should be a number (0, 1, 2, or 3)
-            console.log('correctOption after conversion (should be number):', correctOption, 'Type:', typeof correctOption);
-            
-            // Validate the number
-            const numericCorrect = Number(correctOption);
-            console.log('After Number() conversion:', numericCorrect);
-            
-            if (isNaN(numericCorrect) || numericCorrect < 0 || numericCorrect > 3) {
-                console.error('ERROR: Correct option out of range:', numericCorrect);
-                alert('Error: Invalid correct answer value (must be 0-3 or A-D)');
-                return;
-            }
-            
-            // Convert BOTH to strings for comparison
-            const correctOptionStr = String(numericCorrect);
-            const selectedOptionStr = String(selectedOption);
-            
-            console.log('Final comparison:');
-            console.log('  Selected (string):', selectedOptionStr);
-            console.log('  Correct (string):', correctOptionStr);
-            console.log('  Are they equal?', selectedOptionStr === correctOptionStr);
-            console.log('=== DEBUG END ===');
-
-            // Disable all options and mark the correct one
-            options.forEach(opt => {
-                opt.classList.add('disabled');
-                const optionValue = String(opt.dataset.option);
-                
-                console.log('  Checking option:', optionValue, '=== correct?', correctOptionStr, '→', optionValue === correctOptionStr);
-                
-                if (optionValue === correctOptionStr) {
-                    opt.classList.add('correct');
-                    console.log('  ✓ Added "correct" class to option', optionValue);
-                }
+            cor = String(Number(cor));
+            opts.forEach(o => {
+                o.classList.add('disabled');
+                if (String(o.dataset.option)===cor) o.classList.add('correct');
             });
-
-            // Mark selected option
-            optionElement.classList.add('selected');
-            console.log('Added "selected" class to option', selectedOptionStr);
-            
-            if (selectedOptionStr !== correctOptionStr) {
-                optionElement.classList.add('incorrect');
-                incorrectAnswers++;
-                console.log('✗ User answer is INCORRECT');
-            } else {
-                correctAnswers++;
-                score++;
-                console.log('✓ User answer is CORRECT');
-            }
-
-            // Show explanation and next button
+            el.classList.add('selected');
+            if (sel!==cor) { el.classList.add('incorrect'); incorrectAnswers++; }
+            else { correctAnswers++; score++; }
             document.getElementById('explanation').classList.add('show');
-            document.getElementById('nextBtn').style.display = 'block';
+            document.getElementById('nextBtn').style.display='block';
         }
 
-        // Next question
         function nextQuestion() {
             currentQuestionIndex++;
             showQuestion();
         }
 
-        // Show score
         function showScore() {
             clearInterval(timerInterval);
-            const totalTime = timer.textContent;
-            const percentage = Math.round((score / currentQuestions.length) * 100);
-
-            content.innerHTML = `
-                <div class="score-screen">
-                    <h2>Quiz Complete! 🎉</h2>
-                    <div class="score-display">${percentage}%</div>
-                    <div class="score-details">
-                        <div class="score-item">
-                            <h3>Correct</h3>
-                            <p style="color: #28a745;">${correctAnswers}</p>
-                        </div>
-                        <div class="score-item">
-                            <h3>Incorrect</h3>
-                            <p style="color: #dc3545;">${incorrectAnswers}</p>
-                        </div>
-                        <div class="score-item">
-                            <h3>Total Time</h3>
-                            <p>${totalTime}</p>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" id="restartBtn">Try Another Topic</button>
-                    <button class="btn btn-secondary" id="retryBtn">Retry Same Topic</button>
-                </div>
-            `;
-
-            document.getElementById('restartBtn').addEventListener('click', () => {
-                location.reload();
-            });
-
-            document.getElementById('retryBtn').addEventListener('click', () => {
-                startQuiz();
-            });
+            const tt = timer.textContent;
+            const pc = Math.round((score/currentQuestions.length)*100);
+            const tn = subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection].topics[selectedTopic];
+            content.innerHTML = '<div class="score-screen"><h2>Quiz Complete! 🎉</h2><p style="color:#666;margin-bottom:20px;">'+tn+'</p><div class="score-display">'+pc+'%</div><div class="score-details"><div class="score-item"><h3>Correct</h3><p style="color:#28a745;">'+correctAnswers+'</p></div><div class="score-item"><h3>Incorrect</h3><p style="color:#dc3545;">'+incorrectAnswers+'</p></div><div class="score-item"><h3>Total Time</h3><p>'+tt+'</p></div></div><button class="btn btn-primary" id="anotherTopicBtn">Try Another Topic</button><button class="btn btn-secondary" id="changeSectionBtn">Change Section</button><button class="btn btn-secondary" id="retryBtn">Retry Same Topic</button></div>';
+            document.getElementById('anotherTopicBtn').addEventListener('click', () => { selectedTopic=null; updateBreadcrumb(); showTopicSelection(); });
+            document.getElementById('changeSectionBtn').addEventListener('click', () => { selectedSection=null; selectedTopic=null; controls.style.display='none'; updateBreadcrumb(); showSectionSelection(); });
+            document.getElementById('retryBtn').addEventListener('click', startQuiz);
         }
 
-        // Exit quiz
         function exitQuiz() {
-            if (confirm('Are you sure you want to exit? Your progress will be lost.')) {
+            if (confirm('Exit? Progress will be lost.')) {
                 clearInterval(timerInterval);
-                location.reload();
+                selectedTopic=null;
+                updateBreadcrumb();
+                showTopicSelection();
             }
         }
 
-        // Show error
-        function showError(message) {
-            content.innerHTML = `
-                <div class="error">
-                    <h2>Error</h2>
-                    <p>${message}</p>
-                </div>
-            `;
+        function showError(msg) {
+            content.innerHTML = '<div class="error"><h2>Error</h2><p>'+msg+'</p></div>';
         }
-
-        // Event listeners
-        topicSelect.addEventListener('change', () => {
-            startBtn.disabled = !topicSelect.value;
-        });
-
-        startBtn.addEventListener('click', startQuiz);
-
-        // Initialize
-        loadQuestions();
     </script>
 </body>
 </html>
