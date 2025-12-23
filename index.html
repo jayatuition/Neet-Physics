@@ -201,8 +201,68 @@
                     }
                 }
             },
+            jeemath: {
+                name: "JEE Math",
+                icon: "🔭",
+                classes: {
+                    class11: {
+                        name: "Class 11",
+                        sections: {
+                            section1: {
+                                name: "Section I",
+                                description: "Algebra",
+                                topics: {
+                                    'T50': 'Sets, Relations & Functions',
+                                    'T51': 'Complex Numbers & Quadratic Equations',
+                                    'T52': 'Permutations & Combinations',
+                                    'T53': 'Straight Lines, Conic Sections',
+                                    'T54': '3D Geometry'
+                                   // 'T55': 'Gravitation'
+                                }
+                            },
+                            section2: {
+                                name: "Section II",
+                                description: "Calculus & Statistics",
+                                topics: {
+                                    'T555': 'Limits and Derivatives'
+                                   // 'T56': 'Measures of Dispersion',
+                                    //'T57': 'Probability',
+                                    //'T58': 'Sound Waves'
+                                }
+                            }
+                        }
+                    },
+                    class12: {
+                        name: "Class 12",
+                        sections: {
+                            section1: {
+                                name: "Section I",
+                               // description: "Electricity & Magnetism",
+                                topics: {
+                                    //'T31': 'Electrostatics',
+                                   // 'T32': 'Current Electricity',
+                                   // 'T33': 'Magnetics',
+                                   // 'T34': 'EMI',
+                                   // 'T35': 'Alternating Current',
+                                  //  'T36': 'EM Waves'
+                                }
+                            },
+                            section2: {
+                                name: "Section II",
+                               // description: "Optics & Modern Physics",
+                                topics: {
+                                   // 'T37': 'Ray Optics',
+                                 //   'T38': 'Wave Optics',
+                                  //  'T39': 'Modern Physics',
+                                   // 'T40': 'Semiconductors'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             //chemistry: { name: "Chemistry", icon: "🧪", classes: {}, comingSoon: true },
-            mathematics: { name: "Mathematics", icon: "📐", classes: {}, comingSoon: true }
+            //mathematics: { name: "Mathematics", icon: "📐", classes: {}, comingSoon: true }
         };
 
         let allQuestions=[], currentQuestions=[], currentQuestionIndex=0, score=0, correctAnswers=0, incorrectAnswers=0, timerInterval=null, startTime=null;
