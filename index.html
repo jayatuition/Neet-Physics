@@ -1,119 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET Practice - Physics</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); overflow: hidden; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; position: relative; }
-        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
-        .breadcrumb { font-size: 0.9em; opacity: 0.9; margin-top: 10px; }
-        .breadcrumb button { background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; margin: 0 3px; font-size: 0.9em; }
-        .breadcrumb button:hover { background: rgba(255,255,255,0.3); }
-        .controls { display: flex; justify-content: space-around; padding: 20px; background: #f8f9fa; flex-wrap: wrap; gap: 15px; }
-        .control-group { display: flex; flex-direction: column; align-items: center; }
-        .control-group label { font-weight: 600; margin-bottom: 5px; color: #333; }
-        select, .timer, .question-counter { padding: 10px 15px; border: 2px solid #667eea; border-radius: 8px; font-size: 1em; background: white; }
-        select { cursor: pointer; min-width: 200px; }
-        .timer { font-weight: bold; color: #667eea; min-width: 100px; text-align: center; }
-        .question-counter { font-weight: bold; color: #764ba2; min-width: 100px; text-align: center; }
-        .content { padding: 30px; min-height: 400px; }
-        .selection-screen { text-align: center; padding: 40px 20px; }
-        .selection-screen h2 { color: #333; margin-bottom: 30px; font-size: 2em; }
-        .selection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 30px; }
-        .selection-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 30px; border-radius: 15px; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .selection-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .selection-card .icon { font-size: 3em; margin-bottom: 15px; }
-        .selection-card h3 { font-size: 1.8em; margin-bottom: 10px; }
-        .selection-card p { opacity: 0.9; font-size: 0.95em; }
-        .btn { padding: 12px 30px; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; transition: all 0.3s; font-weight: 600; }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
-        .btn-secondary { background: #6c757d; color: white; margin-left: 10px; }
-        .btn-secondary:hover { background: #5a6268; }
-        .question-card { background: #f8f9fa; padding: 25px; border-radius: 10px; margin-bottom: 25px; }
-        .question-text { font-size: 1.3em; color: #333; margin-bottom: 25px; line-height: 1.6; }
-        .question-text .katex, .option .katex, .explanation .katex { font-size: 1.1em; }
-        .katex-display { margin: 1em 0; text-align: center; }
-        .options { display: flex; flex-direction: column; gap: 15px; }
-        .option { padding: 15px 20px; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: white; font-size: 1.1em; }
-        .option:hover { border-color: #667eea; background: #f0f2ff; }
-        .option.selected { border-color: #667eea; background: #e7eaff; }
-        .option.correct { border-color: #28a745 !important; background: #d4edda !important; }
-        .option.incorrect { border-color: #dc3545 !important; background: #f8d7da !important; }
-        .option.disabled { cursor: not-allowed; opacity: 0.7; }
-        .explanation { margin-top: 20px; padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px; display: none; }
-        .explanation.show { display: block; }
-        .explanation h4 { color: #856404; margin-bottom: 10px; }
-        .explanation p { color: #856404; line-height: 1.6; }
-        .navigation { display: flex; justify-content: space-between; margin-top: 30px; }
-        .score-screen { text-align: center; padding: 40px; }
-        .score-screen h2 { color: #333; font-size: 2.5em; margin-bottom: 20px; }
-        .score-display { font-size: 4em; color: #667eea; font-weight: bold; margin: 30px 0; }
-        .score-details { display: flex; justify-content: space-around; margin: 30px 0; flex-wrap: wrap; gap: 20px; }
-        .score-item { padding: 20px; background: #f8f9fa; border-radius: 10px; min-width: 150px; }
-        .score-item h3 { color: #666; font-size: 1em; margin-bottom: 10px; }
-        .score-item p { font-size: 2em; font-weight: bold; color: #333; }
-        .loading { text-align: center; padding: 50px; font-size: 1.5em; color: #667eea; }
-        .error { text-align: center; padding: 50px; color: #dc3545; }
-        @media (max-width: 768px) {
-            .header h1 { font-size: 1.8em; }
-            .controls { flex-direction: column; }
-            .question-text { font-size: 1.1em; }
-            .option { font-size: 1em; }
-            .selection-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEET Practice</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px}
+.container{max-width:900px;margin:0 auto;background:white;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,0.2);overflow:hidden}
+.header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:30px;text-align:center;position:relative}
+.header h1{font-size:2.5em;margin-bottom:10px}
+.user-info{position:absolute;top:15px;right:20px;font-size:0.9em;background:rgba(255,255,255,0.2);padding:8px 15px;border-radius:20px}
+.user-info button{background:rgba(255,255,255,0.3);border:none;color:white;padding:5px 12px;border-radius:15px;cursor:pointer;margin-left:8px;font-size:0.85em}
+.breadcrumb{font-size:0.9em;opacity:0.9;margin-top:10px}
+.breadcrumb button{background:rgba(255,255,255,0.2);border:none;color:white;padding:5px 12px;border-radius:5px;cursor:pointer;margin:0 3px;font-size:0.9em}
+.controls{display:flex;justify-content:space-around;padding:20px;background:#f8f9fa;flex-wrap:wrap;gap:15px}
+.control-group{display:flex;flex-direction:column;align-items:center}
+.control-group label{font-weight:600;margin-bottom:5px;color:#333}
+select,.timer,.question-counter{padding:10px 15px;border:2px solid #667eea;border-radius:8px;font-size:1em;background:white}
+select{cursor:pointer;min-width:200px}
+.timer{font-weight:bold;color:#667eea;min-width:100px;text-align:center}
+.question-counter{font-weight:bold;color:#764ba2;min-width:100px;text-align:center}
+.content{padding:30px;min-height:400px}
+.auth-screen{text-align:center;padding:40px 20px}
+.auth-screen h2{color:#333;margin-bottom:20px}
+.auth-btn{display:block;width:100%;max-width:400px;margin:15px auto;padding:15px;border:2px solid #667eea;border-radius:10px;cursor:pointer;font-size:1.1em;font-weight:600;background:white;transition:all 0.3s}
+.auth-btn:hover{background:#667eea;color:white;transform:translateY(-2px)}
+.selection-screen{text-align:center;padding:40px 20px}
+.selection-screen h2{color:#333;margin-bottom:30px;font-size:2em}
+.selection-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;margin-top:30px}
+.selection-card{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:40px 30px;border-radius:15px;cursor:pointer;transition:all 0.3s;box-shadow:0 5px 15px rgba(0,0,0,0.2)}
+.selection-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,0.3)}
+.selection-card .icon{font-size:3em;margin-bottom:15px}
+.selection-card h3{font-size:1.8em;margin-bottom:10px}
+.selection-card p{opacity:0.9;font-size:0.95em}
+.btn{padding:12px 30px;border:none;border-radius:8px;font-size:1.1em;cursor:pointer;font-weight:600;transition:all 0.3s}
+.btn-primary{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(102,126,234,0.4)}
+.btn-secondary{background:#6c757d;color:white;margin-left:10px}
+.btn-secondary:hover{background:#5a6268}
+.question-card{background:#f8f9fa;padding:25px;border-radius:10px;margin-bottom:25px}
+.question-text{font-size:1.3em;color:#333;margin-bottom:25px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:15px}
+.option{padding:15px 20px;border:2px solid #dee2e6;border-radius:8px;cursor:pointer;background:white;font-size:1.1em;transition:all 0.3s}
+.option:hover{border-color:#667eea;background:#f0f2ff}
+.option.selected{border-color:#667eea;background:#e7eaff}
+.option.correct{border-color:#28a745!important;background:#d4edda!important}
+.option.incorrect{border-color:#dc3545!important;background:#f8d7da!important}
+.option.disabled{cursor:not-allowed;opacity:0.7}
+.explanation{margin-top:20px;padding:20px;background:#fff3cd;border-left:4px solid #ffc107;border-radius:5px;display:none}
+.explanation.show{display:block}
+.explanation h4{color:#856404;margin-bottom:10px}
+.explanation p{color:#856404;line-height:1.6}
+.navigation{display:flex;justify-content:space-between;margin-top:30px}
+.score-screen{text-align:center;padding:40px}
+.score-screen h2{color:#333;font-size:2.5em;margin-bottom:20px}
+.score-display{font-size:4em;color:#667eea;font-weight:bold;margin:30px 0}
+.score-details{display:flex;justify-content:space-around;margin:30px 0;flex-wrap:wrap;gap:20px}
+.score-item{padding:20px;background:#f8f9fa;border-radius:10px;min-width:150px}
+.score-item h3{color:#666;font-size:1em;margin-bottom:10px}
+.score-item p{font-size:2em;font-weight:bold;color:#333}
+.score-saved{background:#d4edda;padding:15px;border-radius:8px;margin-top:20px;color:#155724}
+@media(max-width:768px){
+.header h1{font-size:1.8em}
+.user-info{position:static;margin-top:15px;display:inline-block}
+.controls{flex-direction:column}
+.selection-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 id="mainTitle">NEET PRACTICE</h1>
-            <div class="breadcrumb" id="breadcrumb" style="display: none;"></div>
-        </div>
-        <div class="controls" id="controls" style="display: none;">
-            <div class="control-group">
-                <label for="topicSelect">Select Topic:</label>
-                <select id="topicSelect"><option value="">Select a topic...</option></select>
-            </div>
-            <div class="control-group">
-                <label>Timer:</label>
-                <div class="timer" id="timer">00:00</div>
-            </div>
-            <div class="control-group">
-                <label>Progress:</label>
-                <div class="question-counter" id="questionCounter">0/0</div>
-            </div>
-        </div>
-        <div class="content" id="content">
-            <div class="selection-screen">
-                <h2>Select Subject</h2>
-                <div class="selection-grid" id="subjectSelection"></div>
-            </div>
-        </div>
-    </div>
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import katex from 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.mjs';
+<div class="container">
+<div class="header">
+<h1 id="mainTitle">NEET PRACTICE</h1>
+<div class="user-info" id="userInfo" style="display:none;"></div>
+<div class="breadcrumb" id="breadcrumb" style="display:none;"></div>
+</div>
+<div class="controls" id="controls" style="display:none;">
+<div class="control-group">
+<label for="topicSelect">Select Topic:</label>
+<select id="topicSelect"><option value="">Select...</option></select>
+</div>
+<div class="control-group">
+<label>Timer:</label>
+<div class="timer" id="timer">00:00</div>
+</div>
+<div class="control-group">
+<label>Progress:</label>
+<div class="question-counter" id="questionCounter">0/0</div>
+</div>
+</div>
+<div class="content" id="content">
+<div class="auth-screen"><h2>🔄 Loading...</h2></div>
+</div>
+</div>
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import{getFirestore,collection,getDocs,addDoc,doc,setDoc,getDoc,updateDoc}from'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import{getAuth,signInWithPopup,GoogleAuthProvider,signOut as fbSignOut,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import katex from'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.mjs';
 
-        const firebaseConfig = {
-  	apiKey: "AIzaSyBGtJ708aHwtpjNWqls93xU7zkCDRV8P6c",
-  	authDomain: "aidu-neet-physics.firebaseapp.com",
- 	 projectId: "aidu-neet-physics",
-  	storageBucket: "aidu-neet-physics.firebasestorage.app",
- 	 messagingSenderId: "1090098670532",
-  	appId: "1:1090098670532:web:61c7cdd518b8d4a61d5291",
- 	 };
+//const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT_ID.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT_ID.appspot.com",messagingSenderId:"YOUR_MESSAGING_SENDER_ID",appId:"YOUR_APP_ID"};
+const firebaseConfig = {
+  apiKey: "AIzaSyBGtJ708aHwtpjNWqls93xU7zkCDRV8P6c",
+  authDomain: "aidu-neet-physics.firebaseapp.com",
+  projectId: "aidu-neet-physics",
+  storageBucket: "aidu-neet-physics.firebasestorage.app",
+  messagingSenderId: "1090098670532",
+  appId: "1:1090098670532:web:61c7cdd518b8d4a61d5291",
+  measurementId: "G-SXKNCW1JY5"
+};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        const subjectStructure = {
+const subjectStructure = {
             physics: {
                 name: "Physics", icon: "⚛️",
                 classes: {
@@ -265,230 +267,323 @@
             //mathematics: { name: "Mathematics", icon: "📐", classes: {}, comingSoon: true }
         };
 
-        let allQuestions=[], currentQuestions=[], currentQuestionIndex=0, score=0, correctAnswers=0, incorrectAnswers=0, timerInterval=null, startTime=null;
-        let selectedSubject=null, selectedClass=null, selectedSection=null, selectedTopic=null;
-        const content=document.getElementById('content'), controls=document.getElementById('controls'), topicSelect=document.getElementById('topicSelect');
-        const timer=document.getElementById('timer'), questionCounter=document.getElementById('questionCounter'), breadcrumb=document.getElementById('breadcrumb'), mainTitle=document.getElementById('mainTitle');
+let allQuestions=[],currentQuestions=[],currentIndex=0,score=0,correct=0,incorrect=0,timerStart=null,timerInterval=null;
+let selectedSubject=null,selectedClass=null,selectedSection=null,selectedTopic=null,currentUser=null,isGuest=false;
+const content=document.getElementById('content'),controls=document.getElementById('controls'),topicSelect=document.getElementById('topicSelect');
+const timer=document.getElementById('timer'),questionCounter=document.getElementById('questionCounter'),breadcrumb=document.getElementById('breadcrumb');
+const mainTitle=document.getElementById('mainTitle'),userInfo=document.getElementById('userInfo');
 
-        showSubjectSelection();
+onAuthStateChanged(auth,(user)=>{
+if(user){currentUser=user;isGuest=false;initApp();}
+else{showAuthScreen();}
+});
 
-        function showSubjectSelection() {
-            const grid = document.getElementById('subjectSelection');
-            grid.innerHTML = '';
-            Object.keys(subjectStructure).forEach(key => {
-                const s = subjectStructure[key];
-                const card = document.createElement('div');
-                card.className = 'selection-card';
-                if (s.comingSoon) { card.style.opacity='0.6'; card.style.cursor='not-allowed'; }
-                const icon = document.createElement('div'); icon.className='icon'; icon.textContent=s.icon;
-                const title = document.createElement('h3'); title.textContent=s.name;
-                const desc = document.createElement('p'); desc.textContent=s.comingSoon?'Coming Soon':'Click to start';
-                card.appendChild(icon); card.appendChild(title); card.appendChild(desc);
-                if (!s.comingSoon) card.onclick = () => selectSubject(key);
-                grid.appendChild(card);
-            });
-        }
+function showAuthScreen(){
+content.innerHTML='<div class="auth-screen"><h2>🎓 Sign In to Continue</h2><p>Track your progress and scores</p><button class="auth-btn" onclick="signInWithGoogle()">🔐 Sign in with Google</button><button class="auth-btn" onclick="continueAsGuest()" style="opacity:0.7;">👤 Continue as Guest<br><small>(Scores not saved)</small></button></div>';
+}
 
-        function selectSubject(key) {
-            selectedSubject = key;
-            mainTitle.textContent = 'NEET ' + subjectStructure[key].name.toUpperCase() + ' PRACTICE';
-            updateBreadcrumb();
-            showClassSelection();
-            loadQuestions();
-        }
+window.signInWithGoogle=async function(){
+try{
+const result=await signInWithPopup(auth,new GoogleAuthProvider());
+currentUser=result.user;
+await createUserProfile(currentUser);
+initApp();
+}catch(error){alert('Sign-in failed: '+error.message);}
+};
 
-        function showClassSelection() {
-            const classes = subjectStructure[selectedSubject].classes;
-            content.innerHTML = '<div class="selection-screen"><h2>Select Class</h2><div class="selection-grid" id="classSelection"></div></div>';
-            const grid = document.getElementById('classSelection');
-            Object.keys(classes).forEach(key => {
-                const cls = classes[key];
-                const card = document.createElement('div');
-                card.className = 'selection-card';
-                card.innerHTML = '<div class="icon">📘</div><h3>'+cls.name+'</h3><p>'+Object.keys(cls.sections).length+' Sections</p>';
-                card.onclick = () => selectClass(key);
-                grid.appendChild(card);
-            });
-        }
+window.continueAsGuest=function(){
+currentUser={uid:'guest_'+Date.now(),displayName:'Guest'};
+isGuest=true;
+initApp();
+};
 
-        function selectClass(key) {
-            selectedClass = key;
-            updateBreadcrumb();
-            showSectionSelection();
-        }
+async function createUserProfile(user){
+const userRef=doc(db,'users',user.uid);
+const snap=await getDoc(userRef);
+if(!snap.exists()){
+await setDoc(userRef,{uid:user.uid,email:user.email,displayName:user.displayName,createdAt:new Date().toISOString(),totalQuizzes:0,totalScore:0});
+}
+}
 
-        function showSectionSelection() {
-            const sections = subjectStructure[selectedSubject].classes[selectedClass].sections;
-            content.innerHTML = '<div class="selection-screen"><h2>Select Section</h2><div class="selection-grid" id="sectionSelection"></div></div>';
-            const grid = document.getElementById('sectionSelection');
-            Object.keys(sections).forEach(key => {
-                const sec = sections[key];
-                const count = Object.keys(sec.topics).length;
-                const card = document.createElement('div');
-                card.className = 'selection-card';
-                card.innerHTML = '<div class="icon">📚</div><h3>'+sec.name+'</h3><p>'+sec.description+'</p><p style="margin-top:10px;font-size:0.9em;">'+count+' Topics</p>';
-                card.onclick = () => selectSection(key);
-                grid.appendChild(card);
-            });
-        }
+async function initApp(){
+updateUserDisplay();
+const snap=await getDocs(collection(db,'questions'));
+allQuestions=[];
+snap.forEach(d=>allQuestions.push({id:d.id,...d.data()}));
+showSubjectSelection();
+}
 
-        function selectSection(key) {
-            selectedSection = key;
-            updateBreadcrumb();
-            showTopicSelection();
-        }
+function updateUserDisplay(){
+const name=currentUser.displayName||'User';
+userInfo.innerHTML='👤 '+name+(isGuest?' (Guest)':'')+'<button onclick="handleSignOut()">Logout</button>';
+userInfo.style.display='block';
+}
 
-        function showTopicSelection() {
-            const section = subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection];
-            controls.style.display = 'flex';
-            topicSelect.innerHTML = '<option value="">-- Select a Topic --</option>';
-            Object.keys(section.topics).forEach(id => {
-                const opt = document.createElement('option');
-                opt.value = id;
-                opt.textContent = section.topics[id];
-                topicSelect.appendChild(opt);
-            });
-            content.innerHTML = '<div class="selection-screen"><h2>Select Topic & Start Quiz</h2><p style="color:#666;margin-top:10px;">Choose a topic from the dropdown above and click Start to begin.</p><button class="btn btn-primary" id="startBtn" style="margin-top:30px;" disabled>Start Quiz</button></div>';
-            const startBtn = document.getElementById('startBtn');
-            topicSelect.onchange = () => { startBtn.disabled = !topicSelect.value; };
-            startBtn.onclick = startQuiz;
-        }
+window.handleSignOut=async function(){
+if(confirm('Sign out?')){
+if(!isGuest)await fbSignOut(auth);
+window.location.reload();
+}
+};
 
-        function updateBreadcrumb() {
-            let html = '';
-            if (selectedSubject) {
-                html += '<button onclick="window.location.reload()">🏠 Home</button> > '+subjectStructure[selectedSubject].name;
-            }
-            if (selectedClass) {
-                html += ' > <button onclick="resetToClass()">'+subjectStructure[selectedSubject].classes[selectedClass].name+'</button>';
-            }
-            if (selectedSection) {
-                html += ' > <button onclick="resetToSection()">'+subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection].name+'</button>';
-            }
-            if (selectedTopic) {
-                html += ' > '+subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection].topics[selectedTopic];
-            }
-            breadcrumb.innerHTML = html;
-            breadcrumb.style.display = selectedSubject ? 'block' : 'none';
-        }
+function showSubjectSelection(){
+content.innerHTML='<div class="selection-screen"><h2>Select Subject</h2><div class="selection-grid" id="subjectGrid"></div></div>';
+const grid=document.getElementById('subjectGrid');
+Object.keys(subjectStructure).forEach(key=>{
+const s=subjectStructure[key];
+const card=document.createElement('div');
+card.className='selection-card';
+if(s.comingSoon){card.style.opacity='0.6';card.style.cursor='not-allowed';}
+card.innerHTML='<div class="icon">'+s.icon+'</div><h3>'+s.name+'</h3><p>'+(s.comingSoon?'Coming Soon':'Click to start')+'</p>';
+if(!s.comingSoon)card.onclick=()=>selectSubject(key);
+grid.appendChild(card);
+});
+}
 
-        window.resetToClass = function() {
-            selectedClass=null; selectedSection=null; selectedTopic=null; controls.style.display='none';
-            updateBreadcrumb(); showClassSelection();
-        };
+function selectSubject(key){
+selectedSubject=key;
+mainTitle.textContent='NEET '+subjectStructure[key].name.toUpperCase()+' PRACTICE';
+updateBreadcrumb();
+showClassSelection();
+}
 
-        window.resetToSection = function() {
-            selectedSection=null; selectedTopic=null; controls.style.display='none';
-            updateBreadcrumb(); showSectionSelection();
-        };
+function showClassSelection(){
+const classes=subjectStructure[selectedSubject].classes;
+content.innerHTML='<div class="selection-screen"><h2>Select Class</h2><div class="selection-grid" id="classGrid"></div></div>';
+const grid=document.getElementById('classGrid');
+Object.keys(classes).forEach(key=>{
+const cls=classes[key];
+const card=document.createElement('div');
+card.className='selection-card';
+card.innerHTML='<div class="icon">📘</div><h3>'+cls.name+'</h3><p>'+Object.keys(cls.sections).length+' Sections</p>';
+card.onclick=()=>selectClass(key);
+grid.appendChild(card);
+});
+}
 
-        async function loadQuestions() {
-            try {
-                const snap = await getDocs(collection(db, 'questions'));
-                allQuestions = [];
-                snap.forEach(doc => allQuestions.push({id:doc.id, ...doc.data()}));
-                console.log('Loaded:',allQuestions.length);
-            } catch (e) {
-                console.error(e);
-                showError('Error: '+e.message);
-            }
-        }
+function selectClass(key){
+selectedClass=key;
+updateBreadcrumb();
+showSectionSelection();
+}
 
-        function startQuiz() {
-            selectedTopic = topicSelect.value;
-            if (!selectedTopic) { alert('Select a topic!'); return; }
-            currentQuestions = allQuestions.filter(q => q.topic_id === selectedTopic);
-            if (!currentQuestions.length) { alert('No questions!'); return; }
-            currentQuestionIndex=0; score=0; correctAnswers=0; incorrectAnswers=0;
-            updateBreadcrumb(); startTimer(); showQuestion();
-        }
+function showSectionSelection(){
+const sections=subjectStructure[selectedSubject].classes[selectedClass].sections;
+content.innerHTML='<div class="selection-screen"><h2>Select Section</h2><div class="selection-grid" id="sectionGrid"></div></div>';
+const grid=document.getElementById('sectionGrid');
+Object.keys(sections).forEach(key=>{
+const sec=sections[key];
+const count=Object.keys(sec.topics).length;
+const card=document.createElement('div');
+card.className='selection-card';
+card.innerHTML='<div class="icon">📚</div><h3>'+sec.name+'</h3><p>'+sec.description+'</p><p style="margin-top:10px;font-size:0.9em;">'+count+' Topics</p>';
+card.onclick=()=>selectSection(key);
+grid.appendChild(card);
+});
+}
 
-        function startTimer() {
-            startTime = Date.now();
-            timerInterval = setInterval(() => {
-                const e = Math.floor((Date.now()-startTime)/1000);
-                const m = Math.floor(e/60), s = e%60;
-                timer.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-            }, 1000);
-        }
+function selectSection(key){
+selectedSection=key;
+updateBreadcrumb();
+showTopicSelection();
+}
 
-        function renderMath(t) {
-            if (!t) return t;
-            t = t.replace(/\$\$([^\$]+)\$\$/g, (m,x) => { try { return katex.renderToString(x,{throwOnError:false,displayMode:true}); } catch(e) { return m; } });
-            t = t.replace(/\$([^\$]+)\$/g, (m,x) => { try { return katex.renderToString(x,{throwOnError:false}); } catch(e) { return m; } });
-            return t;
-        }
+function showTopicSelection(){
+const section=subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection];
+controls.style.display='flex';
+topicSelect.innerHTML='<option value="">-- Select a Topic --</option>';
+Object.keys(section.topics).forEach(id=>{
+const opt=document.createElement('option');
+opt.value=id;
+opt.textContent=section.topics[id];
+topicSelect.appendChild(opt);
+});
+content.innerHTML='<div class="selection-screen"><h2>Select Topic & Start Quiz</h2><p style="color:#666;margin-top:10px;">Choose a topic from dropdown above</p><button class="btn btn-primary" id="startBtn" style="margin-top:30px;" disabled>Start Quiz</button></div>';
+const startBtn=document.getElementById('startBtn');
+topicSelect.onchange=()=>{startBtn.disabled=!topicSelect.value;};
+startBtn.onclick=startQuiz;
+}
 
-        function showQuestion() {
-            if (currentQuestionIndex >= currentQuestions.length) { showScore(); return; }
-            const q = currentQuestions[currentQuestionIndex];
-            questionCounter.textContent = (currentQuestionIndex+1)+'/'+currentQuestions.length;
-            const qt = q.question||q.Question||'?';
-            const oa = q.optionA||q['Option A']||'A?';
-            const ob = q.optionB||q['Option B']||'B?';
-            const oc = q.optionC||q['Option C']||'C?';
-            const od = q.optionD||q['Option D']||'D?';
-            const ex = q.explanation||q.Explanation||'';
-            content.innerHTML = '<div class="question-card"><div class="question-text"><strong>Q'+(currentQuestionIndex+1)+':</strong> '+renderMath(qt)+'</div><div class="options"><div class="option" data-option="0"><strong>A.</strong> '+renderMath(oa)+'</div><div class="option" data-option="1"><strong>B.</strong> '+renderMath(ob)+'</div><div class="option" data-option="2"><strong>C.</strong> '+renderMath(oc)+'</div><div class="option" data-option="3"><strong>D.</strong> '+renderMath(od)+'</div></div><div class="explanation" id="explanation"><h4>Explanation:</h4><p>'+renderMath(ex)+'</p></div></div><div class="navigation"><button class="btn btn-secondary" id="exitBtn">Exit Quiz</button><button class="btn btn-primary" id="nextBtn" style="display:none;">Next Question</button></div>';
-            document.querySelectorAll('.option').forEach(o => o.addEventListener('click', () => selectOption(o)));
-            document.getElementById('exitBtn').addEventListener('click', exitQuiz);
-            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
-        }
+function updateBreadcrumb(){
+let html='';
+if(selectedSubject){
+html+='<button onclick="window.location.reload()">🏠 Home</button> > '+subjectStructure[selectedSubject].name;
+}
+if(selectedClass){
+html+=' > <button onclick="resetToClass()">'+subjectStructure[selectedSubject].classes[selectedClass].name+'</button>';
+}
+if(selectedSection){
+html+=' > <button onclick="resetToSection()">'+subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection].name+'</button>';
+}
+if(selectedTopic){
+html+=' > '+subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection].topics[selectedTopic];
+}
+breadcrumb.innerHTML=html;
+breadcrumb.style.display=selectedSubject?'block':'none';
+}
 
-        function selectOption(el) {
-            const opts = document.querySelectorAll('.option');
-            if (opts[0].classList.contains('disabled')) return;
-            const sel = el.dataset.option;
-            const q = currentQuestions[currentQuestionIndex];
-            let cor = q.correct_code;
-            if (cor===undefined||cor===null) cor = q['Correct Option']||q.correctOption||q.correct_option;
-            if (cor===undefined||cor===null) { alert('Missing answer!'); document.getElementById('nextBtn').style.display='block'; return; }
-            if (typeof cor==='string') {
-                const u = cor.toUpperCase().trim();
-                const m = {'A':0,'B':1,'C':2,'D':3};
-                if (m.hasOwnProperty(u)) cor=m[u];
-                else { const p=parseInt(cor); if (!isNaN(p)) cor=p; }
-            }
-            cor = String(Number(cor));
-            opts.forEach(o => {
-                o.classList.add('disabled');
-                if (String(o.dataset.option)===cor) o.classList.add('correct');
-            });
-            el.classList.add('selected');
-            if (sel!==cor) { el.classList.add('incorrect'); incorrectAnswers++; }
-            else { correctAnswers++; score++; }
-            document.getElementById('explanation').classList.add('show');
-            document.getElementById('nextBtn').style.display='block';
-        }
+window.resetToClass=function(){
+selectedClass=null;selectedSection=null;selectedTopic=null;controls.style.display='none';
+updateBreadcrumb();showClassSelection();
+};
 
-        function nextQuestion() {
-            currentQuestionIndex++;
-            showQuestion();
-        }
+window.resetToSection=function(){
+selectedSection=null;selectedTopic=null;controls.style.display='none';
+updateBreadcrumb();showSectionSelection();
+};
 
-        function showScore() {
-            clearInterval(timerInterval);
-            const tt = timer.textContent;
-            const pc = Math.round((score/currentQuestions.length)*100);
-            const tn = subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection].topics[selectedTopic];
-            content.innerHTML = '<div class="score-screen"><h2>Quiz Complete! 🎉</h2><p style="color:#666;margin-bottom:20px;">'+tn+'</p><div class="score-display">'+pc+'%</div><div class="score-details"><div class="score-item"><h3>Correct</h3><p style="color:#28a745;">'+correctAnswers+'</p></div><div class="score-item"><h3>Incorrect</h3><p style="color:#dc3545;">'+incorrectAnswers+'</p></div><div class="score-item"><h3>Total Time</h3><p>'+tt+'</p></div></div><button class="btn btn-primary" id="anotherTopicBtn">Try Another Topic</button><button class="btn btn-secondary" id="changeSectionBtn">Change Section</button><button class="btn btn-secondary" id="retryBtn">Retry Same Topic</button></div>';
-            document.getElementById('anotherTopicBtn').addEventListener('click', () => { selectedTopic=null; updateBreadcrumb(); showTopicSelection(); });
-            document.getElementById('changeSectionBtn').addEventListener('click', () => { selectedSection=null; selectedTopic=null; controls.style.display='none'; updateBreadcrumb(); showSectionSelection(); });
-            document.getElementById('retryBtn').addEventListener('click', startQuiz);
-        }
+function startQuiz(){
+selectedTopic=topicSelect.value;
+if(!selectedTopic){alert('Select a topic!');return;}
+currentQuestions=allQuestions.filter(q=>q.topic_id===selectedTopic);
+if(!currentQuestions.length){alert('No questions!');return;}
+currentIndex=0;score=0;correct=0;incorrect=0;
+updateBreadcrumb();
+timerStart=Date.now();
+timerInterval=setInterval(()=>{
+const e=Math.floor((Date.now()-timerStart)/1000);
+const m=Math.floor(e/60),s=e%60;
+timer.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+},1000);
+showQuestion();
+}
 
-        function exitQuiz() {
-            if (confirm('Exit? Progress will be lost.')) {
-                clearInterval(timerInterval);
-                selectedTopic=null;
-                updateBreadcrumb();
-                showTopicSelection();
-            }
-        }
+function showQuestion(){
+if(currentIndex>=currentQuestions.length){showScore();return;}
+const q=currentQuestions[currentIndex];
+questionCounter.textContent=(currentIndex+1)+'/'+currentQuestions.length;
+const qt=q.question||q.Question||'?';
+const oa=q.optionA||q['Option A']||'A';
+const ob=q.optionB||q['Option B']||'B';
+const oc=q.optionC||q['Option C']||'C';
+const od=q.optionD||q['Option D']||'D';
+const ex=q.explanation||q.Explanation||'';
 
-        function showError(msg) {
-            content.innerHTML = '<div class="error"><h2>Error</h2><p>'+msg+'</p></div>';
-        }
-    </script>
+content.innerHTML='<div class="question-card"><div class="question-text"><strong>Q'+(currentIndex+1)+':</strong> '+renderMath(qt)+'</div><div class="options"><div class="option" data-option="0"><strong>A.</strong> '+renderMath(oa)+'</div><div class="option" data-option="1"><strong>B.</strong> '+renderMath(ob)+'</div><div class="option" data-option="2"><strong>C.</strong> '+renderMath(oc)+'</div><div class="option" data-option="3"><strong>D.</strong> '+renderMath(od)+'</div></div><div class="explanation" id="explanation"><h4>Explanation:</h4><p>'+renderMath(ex)+'</p></div></div><div class="navigation"><button class="btn btn-secondary" id="exitBtn">Exit</button><button class="btn btn-primary" id="nextBtn" style="display:none;">Next</button></div>';
+
+document.querySelectorAll('.option').forEach(o=>o.addEventListener('click',()=>selectOption(o)));
+document.getElementById('exitBtn').addEventListener('click',exitQuiz);
+document.getElementById('nextBtn').addEventListener('click',nextQuestion);
+}
+
+function renderMath(text){
+if(!text)return text;
+try{
+text=text.replace(/\$\$([^\$]+)\$\$/g,(match,math)=>{
+try{return katex.renderToString(math,{throwOnError:false,displayMode:true});}catch(e){return match;}
+});
+text=text.replace(/\$([^\$]+)\$/g,(match,math)=>{
+try{return katex.renderToString(math,{throwOnError:false});}catch(e){return match;}
+});
+}catch(e){console.error('KaTeX error:',e);}
+return text;
+}
+
+function selectOption(el){
+const opts=document.querySelectorAll('.option');
+if(opts[0].classList.contains('disabled'))return;
+const sel=el.dataset.option;
+const q=currentQuestions[currentIndex];
+let cor=q.correct_code;
+if(cor===undefined)cor=q['Correct Option'];
+if(typeof cor==='string'){
+const m={'A':0,'B':1,'C':2,'D':3};
+cor=m[cor.toUpperCase()]!==undefined?m[cor.toUpperCase()]:parseInt(cor);
+}
+cor=String(Number(cor));
+opts.forEach(o=>{
+o.classList.add('disabled');
+if(String(o.dataset.option)===cor)o.classList.add('correct');
+});
+el.classList.add(sel===cor?'correct':'incorrect');
+if(sel===cor){correct++;score++;}else incorrect++;
+document.getElementById('explanation').classList.add('show');
+document.getElementById('nextBtn').style.display='block';
+}
+
+function nextQuestion(){
+currentIndex++;
+showQuestion();
+}
+
+function exitQuiz(){
+if(confirm('Exit quiz? Progress will be lost.')){
+clearInterval(timerInterval);
+selectedTopic=null;
+updateBreadcrumb();
+showTopicSelection();
+}
+}
+
+async function showScore(){
+clearInterval(timerInterval);
+const time=timer.textContent;
+const pc=Math.round((score/currentQuestions.length)*100);
+const tn=subjectStructure[selectedSubject].classes[selectedClass].sections[selectedSection].topics[selectedTopic];
+
+let html='<div class="score-screen"><h2>Quiz Complete! 🎉</h2><p style="color:#666;margin-bottom:20px;">'+tn+'</p><div class="score-display">'+pc+'%</div><div class="score-details"><div class="score-item"><h3>Correct</h3><p style="color:#28a745;">'+correct+'</p></div><div class="score-item"><h3>Incorrect</h3><p style="color:#dc3545;">'+incorrect+'</p></div><div class="score-item"><h3>Time</h3><p>'+time+'</p></div></div>';
+
+if(!isGuest){
+await saveScore(pc,time,tn);
+html+='<div class="score-saved">✅ Score saved to your profile!</div>';
+}else{
+html+='<div style="background:#fff3cd;padding:15px;border-radius:8px;margin-top:20px;">ℹ️ Sign in to save scores</div>';
+}
+
+html+='<div style="margin-top:20px;"><button class="btn btn-primary" onclick="tryAnotherTopic()">Try Another Topic</button><button class="btn btn-secondary" onclick="changeSection()">Change Section</button><button class="btn btn-secondary" onclick="retryQuiz()">Retry</button></div></div>';
+
+content.innerHTML=html;
+}
+
+window.tryAnotherTopic=function(){
+selectedTopic=null;
+updateBreadcrumb();
+showTopicSelection();
+};
+
+window.changeSection=function(){
+selectedSection=null;selectedTopic=null;controls.style.display='none';
+updateBreadcrumb();
+showSectionSelection();
+};
+
+window.retryQuiz=function(){
+startQuiz();
+};
+
+async function saveScore(percentage,timeTaken,topicName){
+try{
+await addDoc(collection(db,'quiz_attempts'),{
+userId:currentUser.uid,
+subject:selectedSubject,
+class:selectedClass,
+section:selectedSection,
+topicId:selectedTopic,
+topicName:topicName,
+score:score,
+totalQuestions:currentQuestions.length,
+correctAnswers:correct,
+incorrectAnswers:incorrect,
+percentage:percentage,
+timeTaken:timeTaken,
+timestamp:new Date().toISOString()
+});
+
+const userRef=doc(db,'users',currentUser.uid);
+const snap=await getDoc(userRef);
+if(snap.exists()){
+const data=snap.data();
+const newTotal=(data.totalQuizzes||0)+1;
+await updateDoc(userRef,{
+totalQuizzes:newTotal,
+totalScore:(data.totalScore||0)+percentage,
+lastQuizDate:new Date().toISOString()
+});
+}
+}catch(error){
+console.error('Save error:',error);
+}
+}
+</script>
 </body>
 </html>
